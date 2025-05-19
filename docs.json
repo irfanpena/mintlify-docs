@@ -1,102 +1,133 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Tavus",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#F230AA",
+    "light": "#FF6CC8",
+    "dark": "#F230AA"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "navigation": {
-    "tabs": [
+    "anchors": [
       {
-        "tab": "Guides",
+        "anchor": "Documentation",
+        "icon": "book-open",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Changelog",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Essentials",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "changelog-1"
             ]
           }
         ]
       },
       {
-        "tab": "API Reference",
+        "anchor": "API Reference",
+        "icon": "terminal",
         "groups": [
           {
-            "group": "API Documentation",
+            "group": "Phoenix Replicas",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/phoenix-replica-model/create-replica",
+              "api-reference/phoenix-replica-model/get-replica",
+              "api-reference/phoenix-replica-model/get-replicas",
+              "api-reference/phoenix-replica-model/delete-replica",
+              "api-reference/phoenix-replica-model/patch-replica-name"
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Videos",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/video-request/create-video",
+              "api-reference/video-request/get-video",
+              "api-reference/video-request/get-videos",
+              "api-reference/video-request/delete-video",
+              "api-reference/video-request/patch-video-name"
+            ]
+          },
+          {
+            "group": "Conversational Video Interface",
+            "pages": [
+              "api-reference/conversations/create-conversation",
+              "api-reference/conversations/get-conversation",
+              "api-reference/conversations/get-conversations",
+              "api-reference/conversations/end-conversation",
+              "api-reference/conversations/delete-conversation"
+            ]
+          },
+          {
+            "group": "Replica Personas",
+            "pages": [
+              "api-reference/personas/create-persona",
+              "api-reference/personas/get-persona",
+              "api-reference/personas/get-personas",
+              "api-reference/personas/patch-persona-context",
+              "api-reference/personas/delete-persona"
+            ]
+          },
+          {
+            "group": "Lipsync",
+            "pages": [
+              "api-reference/lipsync/create-lipsync",
+              "api-reference/lipsync/get-lipsync",
+              "api-reference/lipsync/get-lipsync-list",
+              "api-reference/lipsync/delete-lipsync"
+            ]
+          },
+          {
+            "group": "Speech",
+            "pages": [
+              "api-reference/speech/create-speech",
+              "api-reference/speech/get-speech",
+              "api-reference/speech/get-speech-list",
+              "api-reference/speech/delete-speech",
+              "api-reference/speech/patch-speech-name"
             ]
           }
         ]
+      },
+      {
+        "anchor": "Community",
+        "href": "https://discord.gg/5Y9Er6WNN5",
+        "icon": "discord"
+      },
+      {
+        "anchor": "Status",
+        "href": "https://status.tavus.io",
+        "icon": "tower-broadcast"
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
   },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Login",
+        "href": "https://platform.tavus.io"
+      },
+      {
+        "label": "Account Help",
+        "href": "https://help.tavus.io/"
+      },
+      {
+        "label": "Get Support",
+        "href": "mailto:developer-support@tavus.io"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get Started",
+      "href": "https://platform.tavus.io"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "linkedin": "https://www.linkedin.com/company/tavus-io/",
+      "discord": "https://discord.gg/5Y9Er6WNN5"
     }
   }
 }
