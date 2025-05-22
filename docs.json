@@ -18,7 +18,7 @@
             "pages": ["sections/introduction", "sections/quickstart", "sections/models"]
           },
           {
-            "group": "Developer Guides",
+            "group": "Conversational Video Interface",
             "pages": [
               "sections/conversational-video-interface/overview-cvi",
               {
