@@ -1,0 +1,189 @@
+---
+title: Customize the Conversation with Interactions Protocol
+description: Quickly customize your conversation with Interactions Protocol.
+---
+
+The Interactions Protocol enables dynamic, real-time control over a live conversation with a Replica. Developers can broadcast interactions to influence the conversation and listen to events emitted by the Replica during runtime.
+
+The Interactions Protocol uses a WebRTC data channel (via [Daily](https://www.daily.co/)) to exchange events between your server and the Conversational Video Interface (CVI).
+
+## Available Interactions
+
+These interaction types can be sent to the Replica to guide or modify its behavior:
+
+* Echo Interaction  
+* Response Interaction  
+* Interrupt Interaction  
+* Override Conversation Context Interaction  
+* Sensitivity Interaction
+
+## Observable Events
+
+The protocol also supports listening to Replica-generated events in real time:
+
+* Utterance Events  
+* Tool Call Events  
+* Perception Tool Call Events  
+* Perception Analysis Events  
+* Replica Started / Stopped Speaking Events  
+* User Started/Stopped Speaking Event
+
+## Example Usage
+
+This example uses a [Daily Python](https://docs.daily.co/reference/daily-python) Flask app to join a room and send an Echo Interaction message to a persona.
+
+### Prerequisites
+
+To use Echo Interactions, you’ll need:
+
+* **A persona in echo mode**  
+   Create one using the [Create Persona endpoint](https://docs.tavus.io/api-reference/personas/create-persona) and save the `persona_id`.  
+* **A conversation using the persona**  
+   Create a conversation with the previously created `persona_id` via the [Create Conversation endpoint](https://docs.tavus.io/api-reference/conversations/create-conversation).  
+* **Required Dependencies**  
+   Install  `Flask` and `daily-python` dependencies using the `pip install` command.
+
+### Usage
+
+1. Create a Python script named `script.py`.
+<Info>
+This script will initialize a Flask server that handles the connection and message-sending logic.
+</Info>
+```py script.py [expandable]
+import sys
+
+
+from flask import Flask, jsonify, request
+from daily import CallClient, Daily, EventHandler
+import time
+
+
+app = Flask(__name__)
+
+
+# Global variable to store the CallClient instance
+call_client = None
+
+
+
+
+class RoomHandler(EventHandler):
+    def __init__(self):
+        super().__init__()
+
+
+    def on_app_message(self, message, sender: str) -> None:
+        print(f"Incoming app message from {sender}: {message}")
+
+
+
+
+def join_room(url):
+    global call_client
+    try:
+        Daily.init()
+        output_handler = RoomHandler()
+        call_client = CallClient(event_handler=output_handler)
+        call_client.join(url)
+        print(f"Joined room: {url}")
+    except Exception as e:
+        print(f"Error joining room: {e}")
+        raise
+
+
+audio_chunks = ["base64-chunk-1", "base64-chunk-2", "base64-chunk-3"]
+
+
+
+
+@app.route("/send_text_message", methods=["POST"])
+def send_text_message():
+    global call_client
+    if not call_client:
+        return jsonify({"error": "Not connected to a room"}), 400
+   
+    try:
+        body = request.json
+        conversation_id = body.get("conversation_id")
+        properties = body.get("properties", {})
+        modality = properties.get("modality")
+        text = properties.get("text")
+        base64_audio = properties.get("audio")
+        sample_rate = properties.get("sample_rate", 16000)
+        inference_id = properties.get("inference_id")
+        done = properties.get("done")
+
+
+        message = {
+            "message_type": "conversation",
+            "event_type": "conversation.echo",
+            "conversation_id": conversation_id,
+            "properties": {
+                "modality": modality,
+                "text": text,
+                "audio": base64_audio,
+                "sample_rate": sample_rate,
+                "inference_id": inference_id,
+                "done": done
+            }
+        }
+
+
+        call_client.send_app_message(message)
+        return jsonify({"status": "Message sent successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": f"Failed to send message: {str(e)}"}), 500
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <conversation_url>")
+        sys.exit(1)
+
+
+    conversation_url = sys.argv[1]
+
+
+    try:
+        join_room(conversation_url)
+        app.run(port=8000, debug=True)
+    except Exception as e:
+        print(f"Failed to start the application: {e}")
+        sys.exit(1)
+```
+
+2. Run the script:
+
+```shell
+python script.py <conversation_url>
+```
+
+<Note>
+**Note**: Replace the `<conversation_url>` with your actual `conversation_url`.
+</Note>
+
+3. Send a **POST** request to `http://localhost:8000/send_text_message` with the required JSON payload to trigger the echo interactions:
+
+```shell cURL
+curl -X POST http://localhost:8000/send_text_message \
+  -H "Content-Type: application/json" \
+  -d '{
+  "message_type": "conversation",
+  "event_type": "conversation.echo",
+  "conversation_id": "<conversation-id>",
+  "properties": {
+    "modality": "text",
+    "text": "Hello there!",
+    "audio": "base64-encoded-audio",
+    "sample_rate": 24000,
+    "inference_id": "inference-id-123",
+    "done": "true"
+  }
+}'
+```
+
+<Note>
+**Note**: Replace the `<conversation_id>` with your actual conversation\_id.
+</Note>
+
+In the example above, the persona will respond by saying "Hello there!".

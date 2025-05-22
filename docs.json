@@ -29,7 +29,8 @@
                   {
                     "group": "Customizations",
                     "pages": [
-                      "sections/conversational-video-interface/conversation/customizations/recording"
+                      "sections/conversational-video-interface/conversation/customizations/recording",
+                      "sections/conversational-video-interface/conversation/customizations/customize-with-interactions-protocol"
                     ]
                   },
                   {
