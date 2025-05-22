@@ -1,0 +1,39 @@
+---
+title: Overview
+description: Unleash the power of AI-driven video interactions with the Tavus API. Go beyond traditional bots—create interactive video tutors, virtual tour guides, or digital spokespeople that engage your audience with realistic, human-like conversations. With Tavus, the possibilities are endless.
+---
+
+<video width="100%" height="100%"  controls >
+  <source src="https://tavus-sample-vids.s3.us-west-1.amazonaws.com/conversation.mov" type="video/mp4"></source>
+</video>
+
+#### Conversations and Personas
+
+- Each **conversation** is a unique video interaction between a user and a [replica](/sections/replicas/overview), complete with its own ID. The replica can handle video generation and [live interactions](/api-reference/conversations/create-conversation) without extra training.
+
+- Upon creating a conversation, you’ll get a `conversation_url` to share with users. If you include a `callback_url`, you'll receive notifications on status changes, such as when the replica joins.
+
+- You can enhance conversations by adding a [**persona**](/api-reference/personas/create-persona), which customizes the replica's behavior with a `system_prompt`. The same persona can be used across multiple replicas.
+
+- Include `conversational_context` to provide specific details about the participant or situation, grounding the replica in the current moment.
+
+- If no persona is added, the conversation will default to a general persona.
+
+- You can customize the language of the conversation by providing the `language` parameter in the `properties` object. Please see the [language parameter](/api-reference/conversations/create-conversation#language) for more information.
+
+### Key Features
+
+- **Quick Integration:** Get started quickly with plug-and-play components.
+- **Realistic Video:** Create lifelike interactions with AI-driven voice, face, and expressions.
+- **Modular Design:** Customize and scale with modular components tailored to your needs.
+- **Developer-Centric** Built for developers, by developers!
+
+### Getting Started
+
+Jump into the [Quick-Start Guide](/sections/conversational-video-interface/quick-start) to start your first conversation with an AI replica in minutes.
+
+### Support
+
+Need help or have feedback? Our developer support team is here to assist you at every stage. Click the chat widget in the bottom right to start messaging us!
+
+This documentation is your resource for efficiently integrating the Tavus Conversational Video Interface into your projects. Let’s build something great together.

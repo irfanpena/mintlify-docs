@@ -1,0 +1,19 @@
+---
+openapi: post /v2/personas
+description: |
+        Create and customize a digital replica's personality for Conversational Video Interface (CVI). A persona defines the replica's behavior and capabilities through configurable layers including:
+
+        **Core Components:**
+        - Replica - Choice of audio/visual appearance 
+        - Context - Customizable contextual information, for use by LLM 
+        - System Prompt - Customizable system prompt, for use by LLM
+        - Layers
+          - STT - Transcription, turn taking, and Sparrow-0 settings 
+          - LLM - Language model settings 
+          - TTS - Text-to-Speech settings
+          {/*- STS - Speech-to-Speech settings*/}
+          - Perception - Multimodal vision and understanding settings (Raven-0)
+
+        When creating a conversation, the persona configuration determines how the replica interacts, processes information, and responds to participants. Each layer can be fine-tuned to achieve the desired conversational experience.
+---
+

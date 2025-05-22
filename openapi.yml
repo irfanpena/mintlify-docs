@@ -1,0 +1,3031 @@
+openapi: 3.0.3
+info:
+  title: Tavus Developer API Collection
+  version: 1.0.0
+  contact: {}
+servers:
+  - url: https://tavusapi.com
+paths:
+  /v2/lipsync:
+    post:
+      tags:
+        - Lipsync
+      summary: Create Lipsync
+      description: |
+        Create a new lipsync video by providing a video URL and an audio URL. The service will synchronize the speaker's mouth movements with the provided audio.
+      operationId: createLipsync
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                original_video_url:
+                  type: string
+                  description: "A direct link to the video that will be modified. This should be a publicly accessible / presigned S3 URL."
+                  example: "https://example.com/video.mp4"
+                source_audio_url:
+                  type: string
+                  description: "A direct link to the audio file that will be synchronized with the video. This should be a publicly accessible / presigned S3 URL."
+                  example: "https://example.com/audio.mp3"
+                lipsync_name:
+                  type: string
+                  description: "An optional name for the lipsync video."
+                  example: "My Lipsync Video"
+                callback_url:
+                  type: string
+                  description: "A url that will receive a callback on completion of the lipsync or on error."
+                  example: "https://your-callback-url.com"
+              required:
+                - original_video_url
+                - source_audio_url
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lipsync_id:
+                    type: string
+                    description: "A unique identifier for the lipsync request."
+                    example: "wf85407a7ba9d"
+                  lipsync_name:
+                    type: string
+                    nullable: true
+                    description: "The name of the lipsync request."
+                    example: "My Lipsync Video"
+                  status:
+                    type: string
+                    description: "The status of the lipsync request."
+                    example: "started"
+                  callback_url:
+                    type: string
+                    description: "The callback URL that will receive notifications about the lipsync request."
+                    example: "https://your-callback-url.com"
+                  request_id:
+                    type: string
+                    description: "Legacy field - will be removed soon. Use lipsync_id instead."
+                    example: "wf85407a7ba9d"
+                  request_name:
+                    type: string
+                    description: "Legacy field - will be removed soon. Use lipsync_name instead."
+                    example: "My Lipsync Video"
+                  
+      security:
+        - apiKey: []
+
+    get:
+      tags:
+        - Lipsync
+      summary: List Lipsyncs
+      description: |
+        This endpoint returns a list of all Lipsyncs created by the account associated with the API Key in use.
+      operationId: listLipsyncs
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: "The number of lipsyncs to return per page. Default is 10."
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number to return. Default is 1."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        lipsync_id:
+                          type: string
+                          description: "A unique identifier for the lipsync request."
+                          example: "w0108f2d24k2a"
+                        lipsync_name:
+                          type: string
+                          description: "The name of the lipsync video."
+                          example: "My Lipsync Video"
+                        status:
+                          type: string
+                          description: "The status of the lipsync request. Can be either `started`, `completed`, or `error`."
+                        created_at:
+                          type: string
+                          description: "The date and time the lipsync request was created."
+                        video_url:
+                          type: string
+                          description: "The URL to download the completed lipsync video."
+                          example: "https://lipsync-prod.s3.amazonaws.com/l0108f2d24k2a.mp4"
+                        request_id:
+                          type: string
+                          description: "Legacy field - will be removed soon. Use lipsync_id instead."
+                          example: "w0108f2d24k2a"
+                        request_name:
+                          type: string
+                          description: "Legacy field - will be removed soon. Use lipsync_name instead."
+                          example: "My Lipsync Video"
+                  total_count:
+                    type: integer
+                    description: "The total number of lipsync videos that fit the query."
+      security:
+        - apiKey: []
+
+  /v2/lipsync/{lipsync_id}:
+    get:
+      tags:
+        - Lipsync
+      summary: Get Lipsync
+      description: |
+        This endpoint returns a single lipsync by its unique identifier.
+      operationId: getLipsync
+      parameters:
+        - in: path
+          name: lipsync_id
+          required: true
+          schema:
+            type: string
+          description: "A unique identifier for the lipsync request."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lipsync_id:
+                    type: string
+                    description: "A unique identifier for the lipsync request."
+                    example: "w0108f2d24k2a"
+                  lipsync_name:
+                    type: string
+                    description: "The name of the lipsync video."
+                    example: "My Lipsync Video"
+                  status:
+                    type: string
+                    description: "The status of the lipsync request."
+                  created_at:
+                    type: string
+                    description: "The date and time the lipsync request was created."
+                  video_url:
+                    type: string
+                    description: "The URL to download the completed lipsync video."
+                    example: "https://lipsync-prod.s3.amazonaws.com/l0108f2d24k2a.mp4"
+                  request_id:
+                    type: string
+                    description: "Legacy field - will be removed soon. Use lipsync_id instead."
+                    example: "w0108f2d24k2a"
+                  request_name:
+                    type: string
+                    description: "Legacy field - will be removed soon. Use lipsync_name instead."
+                    example: "My Lipsync Video"
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Lipsync
+      summary: Delete Lipsync
+      description: |
+        This endpoint deletes a single lipsync by its unique identifier.
+      operationId: deleteLipsync
+      parameters:
+        - in: path
+          name: lipsync_id
+          required: true
+          schema:
+            type: string
+          description: "A unique identifier for the lipsync request."
+      responses:
+        "204":
+          description: ""
+      security:
+        - apiKey: []
+  /v2/replacements:
+    post:
+      tags:
+        - Replacements
+      summary: Create Replacement
+      description: |
+        This endpoint creates a test word replacement request that will modify specific words or phrases in an existing video.
+      operationId: createReplacement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                original_video_url:
+                  type: string
+                  description: "A direct link to the video that will be modified. This should be a publicly accessible / presigned S3 URL."
+                  example: "https://example.com/video.mp4"
+                transcription_id:
+                    type: string
+                    example: "t0108f2d24k2a"
+                    description: "A unique identifier for the transcription."
+                new_transcript:
+                  type: string
+                  example: "Hello John, I'm excited to show you our new product!"
+                  description: "The new text that will replace the old text in the video. This should be an edited version of the text returned from the transcription service (referenced by transcription_id). Both the original transcription and this new text are used to identify which words to replace."
+                callback_url:
+                  type: string
+                  description: "A url that will receive a callback on completion of the replacement or on error."
+                  example: "https://your-callback-url.com"
+                replacement_name:
+                  type: string
+                  description: "An optional name for the replacement."
+                  example: "My First Replacement"
+              required:
+                - original_video_url
+                - new_transcript
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  replacement_id:
+                    type: string
+                    example: "w0108f2d24k2a"
+                    description: "A unique identifier for the replacement."
+                  status:
+                    type: string
+                    description: "The status of the replacement."
+                  created_at:
+                    type: string
+                    description: "The date and time the replacement was created."
+      security:
+        - apiKey: []
+
+    get:
+      tags:
+        - Replacements
+      summary: List Replacements
+      description: |
+        This endpoint returns a list of all Replacements created by the account associated with the API Key in use.
+      operationId: listReplacements
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: "The number of replacements to return per page. Default is 10."
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number to return. Default is 1."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        replacement_id:
+                          type: string
+                          description: "A unique identifier for the replacement."
+                          example: "w0108f2d24k2a"
+                        replacement_name:
+                          type: string
+                          description: "The name of the replacement."
+                          example: "My First Replacement"
+                        status:
+                          type: string
+                          description: "The status of the replacement. Can be either `started`, `completed`, or `error`."
+                        created_at:
+                          type: string
+                          description: "The date and time the replacement was created."
+                  total_count:
+                    type: integer
+                    description: "The total number of replacements that fit the query."
+      security:
+        - apiKey: []
+
+  /v2/replacements/{replacement_id}:
+    get:
+      tags:
+        - Replacements
+      summary: Get Replacement
+      description: |
+        This endpoint returns a single replacement by its unique identifier.
+      operationId: getReplacement
+      parameters:
+        - in: path
+          name: replacement_id
+          required: true
+          schema:
+            type: string
+          description: "A unique identifier for the replacement."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  replacement_id:
+                    type: string
+                    example: "w0108f2d24k2a"
+                    description: "A unique identifier for the replacement."
+                  replacement_name:
+                    type: string
+                    description: "The name of the replacement."
+                  status:
+                    type: string
+                    description: "The status of the replacement."
+                  created_at:
+                    type: string
+                    description: "The date and time the replacement was created."
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Replacements
+      summary: Delete Replacement
+      description: |
+        This endpoint deletes a single replacement by its unique identifier.
+      operationId: deleteReplacement
+      parameters:
+        - in: path
+          name: replacement_id
+          required: true
+          schema:
+            type: string
+          description: "A unique identifier for the replacement."
+      responses:
+        "204":
+          description: ""
+      security:
+        - apiKey: []
+
+  /v2/speech:
+    post:
+      tags:
+        - Speech
+      summary: Generate Speech
+      description: |
+        This endpoint generates an audio file based on a script with a provided Replica.
+      operationId: generateSpeech
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                script:
+                  type: string
+                  description: "The text script that will be used to generate the audio."
+                  example: ""
+                replica_id:
+                  type: string
+                  description: "The replica that will be used to generate the audio."
+                  example: ""
+                speech_name:
+                  type: string
+                  description: "A name for the speech."
+                  example: ""
+                callback_url:
+                  type: string
+                  description: "The speech file will be returned asynchoronously as a presigned S3 URL."
+                  example: ""
+
+              required:
+                - script
+                - replica_id
+                - callback_url
+            examples:
+              Generate Speech:
+                value:
+                  script: ""
+                  replica_id: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  speech_id:
+                    type: string
+                    example: ""
+                    description: "A unique identifier for the speech."
+                  speech_name:
+                    type: string
+                    description: "The name of the speech."
+                  speech_file_url:
+                    type: string
+                    description: "If no callback_url is provided in the request, this will contain a direct link to download the speech file."
+      security:
+        - apiKey: []
+
+    get:
+      tags:
+        - Speech
+      summary: List Speeches
+      description: |
+        This endpoint returns a list of all Speeches created by the account associated with the API Key in use.
+      operationId: listSpeeches
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: "The number of speeches to return per page. Default is 10."
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number to return. Default is 1."
+        - in: query
+          name: replica_id
+          schema:
+            type: string
+          description: "A unique identifier for the replica whose speeches you would like to list."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        speech_id:
+                          type: string
+                          description: "A unique identifier for the speech."
+                          example: ""
+                        speech_name:
+                          type: string
+                          description: "A name for the speech."
+                          example: ""
+                        speech_file_url:
+                          type: string
+                          description: "A direct link to download the speech file."
+                          example: ""
+                        replica_id:
+                          type: string
+                          description: "The replica that was used to generate the speech."
+                          example: ""
+      security:
+        - apiKey: []
+
+  /v2/speech/{speech_id}:
+    get:
+      tags:
+        - Speech
+      summary: Get Speech
+      description: |
+        This endpoint returns a single speech by its unique identifier.
+      operationId: getSpeech
+      parameters:
+        - in: path
+          name: speech_id
+          required: true
+          schema:
+            type: string
+          description: "A unique identifier for the speech."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  speech_id:
+                    type: string
+                    example: ""
+                    description: "A unique identifier for the speech."
+                  speech_name:
+                    type: string
+                    description: "The name of the speech."
+                  speech_file_url:
+                    type: string
+                    description: "A direct link to download the speech file."
+                  replica_id:
+                    type: string
+                    description: "The replica that was used to generate the speech."
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Speech
+      summary: Delete Speech
+      description: |
+        This endpoint deletes a single speech by its unique identifier.
+      operationId: deleteSpeech
+      responses:
+        "204":
+          description: ""
+      security:
+        - apiKey: []
+    parameters:
+      - name: speech_id
+        in: path
+        required: true
+        schema:
+          type: string
+
+  /v2/speech/{speech_id}/name:
+    patch:
+      tags:
+        - Speech
+      summary: Rename Speech
+      description: |
+        This endpoint renames a single speech by its unique identifier.
+      operationId: renameSpeech
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                speech_name:
+                  type: string
+                  example: ""
+              required:
+                - speech_name
+            examples:
+              Rename Speech:
+                value:
+                  speech_name: ""
+      responses:
+        "204":
+          description: ""
+      security:
+        - apiKey: []
+    parameters:
+      - name: speech_id
+        in: path
+        required: true
+        schema:
+          type: string
+
+  /v2/videos:
+    get:
+      tags:
+        - Videos
+      summary: List Videos
+      description: |
+        This endpoint returns a list of all Videos created by the account associated with the API Key in use.
+      operationId: listVideos
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: "The number of videos to return per page. Default is 10."
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number to return. Default is 1."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        video_id:
+                          type: string
+                          description: "A unique identifier for the video."
+                          example: "783537ef5"
+                        video_name:
+                          type: string
+                          description: "A name for the video."
+                          example: "My First Video"
+                        status:
+                          type: string
+                          description: "The status of the video. Possible values: queued, generating, ready, deleted, error."
+                          example: "generating"
+                        data:
+                          type: object
+                          properties:
+                            script:
+                              type: string
+                              description: "The script that was initially used to generate the video."
+                              example: "Hello from Tavus! Enjoy your new replica"
+                        download_url:
+                          type: string
+                          description: "A link to download the video."
+                          example: ""
+                        hosted_url:
+                          type: string
+                          description: "A link to view the video."
+                        stream_url:
+                          type: string
+                          description: "A link to stream the video."
+                          example: ""
+                        status_details:
+                          type: string
+                          description: "A detailed status of the video."
+                          example: ""
+                        background_url:
+                          type: string
+                          description: "A link to a website. This will be used as the background for the video. The website must be publicly accessible and properly formed."
+                          example: ""
+                        background_source_url:
+                          type: string
+                          description: "A direct link to a video that is publicly accessible via a storage location such as an S3 bucket. This will be used as the background for the video. The video must be publicly accessible."
+                          example: ""
+                        still_image_thumbnail_url:
+                          type: string
+                          description: "A link to a still image that is a thumbnail of the video."
+                          example: ""
+                        gif_thumbnail_url:
+                          type: string
+                          description: "A link to a gif that is a thumbnail of the video."
+                          example: ""
+                        error_details:
+                          type: string
+                          description: "If the video has an error, this will contain the error message."
+                          example: ""
+                  total_count:
+                    type: integer
+                    description: "The total number of videos given the filters provided."
+      security:
+        - apiKey: []
+
+    post:
+      tags:
+        - Videos
+      summary: Generate Video
+      description: |
+        This endpoint generates a new video using a Replica and either a script or an audio file. 
+
+        The only required body parameters are `replica_id` and either `script` or `audio_file`. 
+
+        The `replica_id` is a unique identifier for the Replica that will be used to generate the video. The `script` is the text that will be spoken by the Replica in the video. If you would like to generate a video using an audio file instead of a script, you can provide `audio_url` instead of `script`. Currently, `.wav` and `.mp3` files are supported for audio file input.
+
+        If a `background_url` is provided, Tavus will record a video of the website and use it as the background for the video. If a `background_source_url` is provided, where the URL points to a download link such as a presigned S3 URL, Tavus will use the video as the background for the video. If neither are provided, the video will consist of a full screen Replica.
+
+        To learn more about generating videos with Replicas, see [here](/sections/video-generation/overview).
+
+        To learn more about writing an effective script for your video, see [Scripting prompting](/sections/video-generation/scripting-prompting).
+      operationId: generateVideo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                replica_id:
+                  type: string
+                  description: "A unique identifier for the replica that will be used to generate the video."
+                  example: "r783537ef5"
+                video_name:
+                  type: string
+                  description: "A name for the video."
+                  example: "My First Video"
+                background_url:
+                  type: string
+                  description: "A link to a website. This will be used as the background for the video. The website must be publicly accessible and properly formed."
+                  example: ""
+                background_source_url:
+                  type: string
+                  description: "A direct link to a video that is publicly accessible via a storage location such as an S3 bucket. This will be used as the background for the video. The video must be publicly accessible."
+                  example: ""
+                callback_url:
+                  type: string
+                  description: "A url that will receive a callback on completion of video generation or on error."
+                  example: ""
+                fast:
+                  type: boolean
+                  description: "If set to true, the video will be generated using a barebones fast rendering process. This will result in a faster generation of the video but some features will be disabled. Features such as background generation, thumbnail images, and streaming urls are not supported when using this fast rendering process."
+                  example: false
+                transparent_background:
+                  type: boolean
+                  description: |
+                    If set to true, the generated video will be a `.webm` video with a transparent background.
+
+                    Please note that this feature only works if the `fast` parameter is set to `true`.
+                  example: false
+                watermark_image_url:
+                  type: string
+                  description: "A direct link to a image that is publicly accessible via a storage location such as an S3 bucket. 
+                  This will be used as the watermark on the video. Currently, it support `png` & `jpeg` formats only. Ensure the image is publicly accessible."
+                  example: https://s3.amazonaws.com/watermark.png
+                properties:
+                  type: object
+                  properties:
+                    background_scroll:
+                      type: boolean
+                      description: |
+                        If `background_url` is provided, this option may be configured.
+
+                        If set to `true`, the background video will scroll down through the website. If set to `false`, the background video will display the top of the website. 
+
+                        The default is `true`.
+                      example: true
+                    background_scroll_type:
+                      type: string
+                      description: |
+                        If `background_url` is provided and `background_scroll` is set to `true`, this option may be configured.
+
+                        This parameter defines the scroll pattern if `background_scroll` is set to `true`. 
+
+                        There are two options: `human`, `smooth`. 
+
+                        The `human` scroll type is the default type and mimics a human scrolling through the webpage, briefly stopping at certain intervals to give a natural appearance. The `smooth` scroll type scroll in a uniform manner all the way down the website without stopping.
+
+                        The default is `human`.
+                    background_scroll_depth:
+                      type: string
+                      description: |
+                        If `background_url` is provided and `background_scroll` is set to `true`, this option may be configured.
+
+                         This parameter defines how far down the webpage the background video will scroll.
+                         
+                         There are two options: `middle`, `bottom`.
+                         
+                         The `middle` depth option will stop scrolling once the middle of the webpage has been hit. The `bottom` will scroll the webpage all the way to the bottom of the page.
+                         
+                         The default is `middle`.
+                    background_scroll_return:
+                      type: string
+                      description: |
+                        If `background_url` is provided and `background_scroll` is set to `true`, this option may be configured.
+
+                        This parameter defines the scrolling behavior once the webpage has been scrolled to the depth specified by the `background_scroll_depth` parameter.
+
+                        There are two options: `return`, `halt`.
+
+                        The `return` option will scroll back up once the webpage has reached `background_scroll_depth`. The `halt` option will pause the background video at the location specified in `background_scroll_depth`.
+
+                        The default is `return`.
+                    start_with_wave:
+                      type: boolean
+                      description: |
+                        If set to true, the video will start with a wave animation. This is only supported for select stock replicas.
+
+                        The default is `true`.
+                      example: true
+              required:
+                - replica_id
+              oneOf:
+                - title: Generate from Text
+                  type: object
+                  properties:
+                    script:
+                      type: string
+                      description: "A text script that will be used to generate the audio in the video."
+                      example: "Hello from Tavus! Enjoy your new replica"
+                  required:
+                    - script
+                - title: Generate from Audio File
+                  type: object
+                  properties:
+                    audio_url:
+                      type: string
+                      description: "A download link to a .wav or .mp3 file that is publicly accessible via a storage location such as an S3 bucket. This audio file will be used as the audio for the generated video."
+                  required:
+                    - audio_url
+            examples:
+              Generate Video:
+                value:
+                  background_url: ""
+                  replica_id: ""
+                  script: ""
+                  video_name: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  video_id:
+                    type: string
+                    example: ""
+                    description: "A unique identifier for the video."
+                  video_name:
+                    type: string
+                    description: "The name of the video."
+                  status:
+                    type: string
+                    description: "The status of the video. Possible values: queued, generating, ready, deleted, error."
+                  hosted_url:
+                    type: string
+                    description: "A direct link to view your video once generation has completed, hosted by Tavus."
+                  created_at:
+                    type: string
+                    description: "The date and time the video was created."
+
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      security:
+        - apiKey: []
+  /v2/videos/{video_id}:
+    get:
+      tags:
+        - Videos
+      summary: Get Video
+      description: |
+        This endpoint returns a single video by its unique identifier. 
+
+        The response body will contain a `status` string that represents the status of the video. If the video is ready, the response body will also contain a `download_url`, `stream_url`, and `hosted_url` that can be used to download, stream, and view the video respectively.
+      operationId: getVideo
+      parameters:
+        - in: path
+          name: video_id
+          required: true
+          schema:
+            type: string
+          description: "A unique identifier for the video."
+        - in: query
+          name: verbose
+          schema:
+            type: boolean
+          description: "If set to true, the response will include additional video data such as the thumbnail image and gif links."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  video_id:
+                    type: string
+                    example: ""
+                    description: "A unique identifier for the video."
+                  video_name:
+                    type: string
+                    description: "The name of the video."
+                  status:
+                    type: string
+                    example: "ready"
+                    description: "The status of the video. Possible values: queued, generating, ready, deleted, error."
+                  data:
+                    type: object
+                    properties:
+                      script:
+                        type: string
+                        description: "The script that was initially used to generate the video."
+                  download_url:
+                    type: string
+                    description: "A direct link to download your generated video."
+                  stream_url:
+                    type: string
+                    description: "A direct link to stream your generated video."
+                  hosted_url:
+                    type: string
+                    description: "A direct link to view your generated video, hosted by Tavus."
+                  status_details:
+                    type: string
+                    description: "A detailed status of the video."
+                  created_at:
+                    type: string
+                    description: "The date and time the video was created."
+                  updated_at:
+                    type: string
+                    description: "The date and time of when the video was last updated."
+                  still_image_thumbnail_url:
+                    type: string
+                    description: "Included if the `verbose` query parameter is set to true. A link to an image thumbnail of the video."
+                  gif_thumbnail_url:
+                    type: string
+                    description: "Included if the `verbose` query parameter is set to true. A link to a gif thumbnail of the video."
+      security:
+        - apiKey: []
+    delete:
+      tags:
+        - Videos
+      summary: Delete Video
+      description: |
+        This endpoint deletes a single video by its unique identifier.
+      operationId: deleteVideo
+      parameters:
+        - name: video_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: hard
+          in: query
+          schema:
+            type: boolean
+          description: "If set to true, the video and associated assets (such as thumbnail images) will be hard deleted. CAUTION: This action is irrevocable."
+      responses:
+        "200":
+          description: ""
+      security:
+        - apiKey: []
+
+  /v2/videos/{video_id}/name:
+    patch:
+      tags:
+        - Videos
+      summary: Rename Video
+      description: |
+        This endpoint renames a single video by its unique identifier.
+      operationId: renameVideo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                video_name:
+                  type: string
+                  example: ""
+              required:
+                - video_name
+            examples:
+              Rename Video:
+                value:
+                  video_name: ""
+      responses:
+        "200":
+          description: ""
+      security:
+        - apiKey: []
+    parameters:
+      - name: video_id
+        in: path
+        required: true
+        schema:
+          type: string
+
+  /v2/replicas:
+    get:
+      tags:
+        - Replicas
+      summary: List Replicas
+      description: |
+        This endpoint returns a list of all Replicas created by the account associated with the API Key in use. In the response, a root level `data` key will contain the list of Replicas.
+      operationId: listReplicas
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: "The number of replicas to return per page."
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number to return"
+        - in: query
+          name: verbose
+          schema:
+            type: boolean
+          description: "If set to true, the response will include additional replica data such as the replica type."
+        - in: query
+          name: replica_type
+          schema:
+            type: string
+            enum:
+              - user
+              - system
+          description: "If set to user, the response will only include user replicas. If set to system, the response will only include stock replicas."
+        - in: query
+          name: replica_ids
+          schema:
+            type: string
+          description: "A comma separated list of replica ids to filter the response by. Example: `replica_ids=re1074c227,r243eed46c`"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        replica_id:
+                          type: string
+                          example: "r783537ef5"
+                          description: "A unique identifier for the replica."
+                        replica_name:
+                          type: string
+                          example: "My Replica"
+                          description: "The name of the replica."
+                        thumbnail_video_url:
+                          type: string
+                          description: "A direct link to the video that will be used as the thumbnail for the replica."
+                        training_progress:
+                          type: string
+                          example: "100/100"
+                          description: "The progress of the replica training."
+                        status:
+                          type: string
+                          example: "completed"
+                          description: "The status of the replica. Possible values: started, completed, error."
+                        created_at:
+                          type: string
+                        replica_type:
+                          type: string
+                          example: user'
+                          description: "If `verbose` query paramter is set to true. The type of replica. Possible values: user, system. User replicas are replicas that have been created by users. System replicas are stock Tavus replicas that anyone may use"
+                  total_count:
+                    type: integer
+                    description: "The total number of replicas given the filters provided."
+                    example: 42
+      security:
+        - apiKey: []
+
+    post:
+      tags:
+        - Replicas
+      summary: Create Replica
+      description: |
+        This endpoint creates a new Replica that can be used to generate personalized videos. 
+
+        By default, all new replicas will be trained using the `phoenix-3` model. You can optionally create phoenix-2 replicas by setting the `model_name` parameter to `phoenix-2`.
+
+        The only required body parameter is `train_video_url`. This url must be a download link such as a presigned S3 url. Please ensure you pass in a video that meets the [requirements](/sections/troubleshooting/training-video-size) for training.
+
+        Replica training will fail without the following consent statement being present at the beginning of the video:
+        > I, [FULL NAME], am currently speaking and consent Tavus to create an AI clone of me by using the audio and video samples I provide. I understand that this AI clone can be used to create videos that look and sound like me.
+
+        Learn more about the consent statement [here](/sections/troubleshooting/consent-statement).
+
+        Learn more about training a personal Replica [here](/sections/replicas/personal-replicas).
+
+      operationId: createReplica
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                consent_video_url:
+                  type: string
+                  description: "A direct link to a video that contains the consent statement. You may optionally send the consent statement in a separate video from your training video. If you do not provide a consent video, the consent statement must be present at the beginning of the training video."
+                  example: ""
+                train_video_url:
+                  type: string
+                  description: "A direct link to a publicly accessible storage location such as an S3 bucket. This video will be used for replica training."
+                  example: ""
+                callback_url:
+                  type: string
+                  description: "A url that will receive a callback on completion of replica training or on error."
+                  example: ""
+                replica_name:
+                  type: string
+                  description: "A name for the replica."
+                  example: ""
+                model_name:
+                  type: string
+                  description: "The phoenix model version that will be used to train the replica. The current default is `phoenix-3`."
+                  example: ""
+                properties:
+                  type: object
+                  properties:
+                    gaze_correction:
+                      type: boolean
+                      description: "If set to true, the replica will have gaze correction enabled."
+                      example: false
+                    background_green_screen:
+                      type: boolean
+                      description: "If set to true, the replica will have a green screen background."
+                      example: false
+              required:
+                - train_video_url
+            examples:
+              Create Replica:
+                value:
+                  callback_url: ""
+                  replica_name: ""
+                  train_video_url: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  replica_id:
+                    type: string
+                    example: "r783537ef5"
+                    description: "A unique identifier for the replica."
+                  status:
+                    type: string
+                    example: "training"
+                    description: "The status of the replica. Possible values: started, completed, error."
+      security:
+        - apiKey: []
+  /v2/replicas/{replica_id}:
+    get:
+      tags:
+        - Replicas
+      summary: Get Replica
+      description: |
+        This endpoint returns a single Replica by its unique identifier. 
+
+        Included in the response body is a `training_progress` string that represents the progress of the Replica training. If there are any errors during training, the `status` will be `error` and the `error_message` will be populated.
+
+      operationId: getReplica
+      parameters:
+        - in: path
+          name: replica_id
+          required: true
+          schema:
+            type: string
+          description: "A unique identifier for the replica."
+        - in: query
+          name: verbose
+          schema:
+            type: boolean
+          description: "If set to true, the response will include additional replica data such as replica_type."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  replica_id:
+                    type: string
+                    example: "r783537ef5"
+                    description: "A unique identifier for the replica."
+                  replica_name:
+                    type: string
+                    example: "My Replica"
+                    description: "The name of the replica."
+                  thumbnail_video_url:
+                    type: string
+                    description: "A direct link to the video that will be used as the thumbnail for the replica."
+                  training_progress:
+                    type: string
+                    example: "100/100"
+                    description: "The progress of the replica training."
+                  status:
+                    type: string
+                    example: "completed"
+                    description: "The status of the replica. Possible values: started, completed, error."
+                  created_at:
+                    type: string
+                    example: "2024-01-24T07:14:03.327Z"
+                    description: "The date and time the replica was created."
+                  updated_at:
+                    type: string
+                    example: "2024-01-24T07:14:03.327Z"
+                    description: "The date and time of when the replica was last updated."
+                  error_message:
+                    type: string
+                    nullable: true
+                    description: "If the replica has an error, this will contain the error message."
+                  replica_type:
+                    type: string
+                    example: user'
+                    description: "If `verbose` query paramter is set to true. The type of replica. Possible values: user, system. User replicas are replicas that have been created by users. System replicas are stock Tavus replicas that anyone may use"
+      security:
+        - apiKey: []
+    delete:
+      tags:
+        - Replicas
+      summary: Delete Replica
+      description: |
+        This endpoint deletes a single Replica by its unique identifier. Once deleted, this Replica can not be used to generate videos.
+
+      operationId: deleteReplica
+      parameters:
+        - name: replica_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: hard
+          in: query
+          schema:
+            type: boolean
+          description: "If set to true, the replica and associated assets (such as training footage) will be hard deleted. CAUTION: This action is irrevocable. Note that a hard delete of a replica does *not* delete the videos created using said replica. See [Delete Video](https://docs.tavus.io/api-reference/video-request/delete-video) for more info."
+      responses:
+        "200":
+          description: ""
+      security:
+        - apiKey: []
+
+  /v2/replicas/{replica_id}/name:
+    patch:
+      tags:
+        - Replicas
+      summary: Rename Replica
+      description: |
+        This endpoint renames a single Replica by its unique identifier.
+      operationId: renameReplica
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                replica_name:
+                  type: string
+                  example: ""
+              required:
+                - replica_name
+            examples:
+              Rename Replica:
+                value:
+                  replica_name: ""
+      responses:
+        "200":
+          description: ""
+      security:
+        - apiKey: []
+    parameters:
+      - name: replica_id
+        in: path
+        required: true
+        schema:
+          type: string
+
+  /v2/conversations:
+    post:
+      tags:
+        - Conversations
+      summary: Create Conversation
+      description: |
+        With the Tavus Conversational Video Interface (CVI) you are able to create a `conversation` with a replica in real time.
+
+        ### Conversations
+        A `conversation` is a video call with a replica. 
+
+        After creating a `conversation`, a `conversation_url` will be returned in the response. The `conversation_url` can be used to join the conversation directly or can be embedded in a website. To embed the `conversation_url` in a website, you can find [instructions here](https://www.daily.co/products/prebuilt-video-call-app/quickstart/).
+
+        Once a conversation is created, the replica will automatically join the call and will start participating.
+
+        By providing a `callback_url`, you can receive webhooks with updates regarding the conversation state.
+
+        [Learn about recording conversations here](/sections/conversational-video-interface/recording-rooms).
+      operationId: createConversation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                replica_id:
+                  type: string
+                  description: "The unique identifier for the replica that will join the conversation."
+                  example: "r79e1c033f"
+                persona_id:
+                  type: string
+                  description: "The unique identifier for the persona that the replica will use in the conversation."
+                  example: "p5317866"
+                callback_url:
+                  type: string
+                  description: "A url that will receive webhooks with updates regarding the conversation state."
+                  example: "https://yourwebsite.com/webhook"
+                conversation_name:
+                  type: string
+                  description: "A name for the conversation."
+                  example: "A Meeting with Hassaan"
+                conversational_context:
+                  type: string
+                  description: "Optional context that will be appended to any context provided in the persona, if one is provided."
+                  example: "You are about to talk to Hassaan, one of the cofounders of Tavus. He loves to talk about AI, startups, and racing cars."
+                custom_greeting:
+                  type: string
+                  description: "An optional custom greeting that the replica will give once a participant joines the conversation."
+                  example: "Hey there Hassaan, long time no see!"
+                properties:
+                  type: object
+                  description: "Optional properties that can be used to customize the conversation."
+                  properties:
+                    max_call_duration:
+                      type: integer
+                      description: "The maximum duration of the call in seconds. The default max_call_duration is 3600 seconds (1 hour). Once the time limit specified by this parameter has been reached, the conversation will automatically shut down."
+                      example: 3600
+                    participant_left_timeout:
+                      type: integer
+                      description: "The duration in seconds after which the call will be automatically shut down once the last participant leaves."
+                      example: 60
+                    participant_absent_timeout:
+                      type: integer
+                      description: "Starting from conversation creation, the duration in seconds after which the call will be automatically shut down if no participant joins the call. Default is 300 seconds (5 minutes)."
+                      example: 300
+                    enable_recording:
+                      type: boolean
+                      description: "If true, the user will be able to record the conversation. You can find more instructions on recording [here](/sections/conversational-video-interface/recording-rooms)."
+                      example: true
+                    enable_closed_captions:
+                      type: boolean
+                      description: "If true, the user will be able to display closed captions (subtitles) during the conversation. You can find more instructions on displaying closed captions if you are using your custom DailyJS components [here](https://docs.daily.co/reference/daily-js/events/transcription-events#transcription-message). You need to have an [event listener](https://docs.daily.co/reference/daily-js/events) on Daily that listens for app-messages."
+                      example: true
+                    apply_greenscreen:
+                      type: boolean
+                      description: "If true, the background will be replaced with a greenscreen (RGB values: [0, 255, 155]). You can use WebGL on the frontend to make the greenscreen transparent or change its color."
+                      example: true
+                    language:
+                      type: string
+                      description: "The language of the conversation. Please provide the FULL language name, not the two letter code.  If you are using your own TTS voice, please ensure it supports the language you provide. If you are using a stock replica or default persona, please note that only Elevenlabs and Cartesia supported languages are available. You can find a full list of supported languages for Cartesia [here](https://docs.cartesia.ai/2024-11-13/build-with-cartesia/models#language-support), for ElevenLabs [here](https://elevenlabs.io/languages) and for PlayHT [here](https://play.ht/)"
+                      example: "english"
+                    recording_s3_bucket_name:
+                      type: string
+                      description: "The name of the S3 bucket where the recording will be stored."
+                      example: "conversation-recordings"
+                    recording_s3_bucket_region:
+                      type: string
+                      description: "The region of the S3 bucket where the recording will be stored."
+                      example: "us-east-1"
+                    aws_assume_role_arn:
+                      type: string
+                      description: "The ARN of the role that will be assumed to access the S3 bucket."
+                      example: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id:
+                    type: string
+                    description: "A unique identifier for the conversation."
+                    example: "c123456"
+                  conversation_name:
+                    type: string
+                    description: "The name of the conversation."
+                    example: "A Meeting with Hassaan"
+                  status:
+                    type: string
+                    description: "The status of the conversation. Possible values: `active`, `ended`."
+                    example: "active"
+                  conversation_url:
+                    type: string
+                    description: "A direct link to join the conversation. This link can be used to join the conversation directly or can be embedded in a website."
+                    example: "https://tavus.daily.co/c123456"
+                  replica_id:
+                    type: string
+                    description: "A unique identifier for the replica used to create this conversation."
+                    example: "r79e1c033f"
+                  persona_id:
+                    type: string
+                    description: "A unique identifier for the persona used to create this conversation."
+                    example: "p5317866"
+                  created_at:
+                    type: string
+                    description: "The date and time the conversation was created."
+
+    get:
+      tags:
+        - Conversations
+      summary: List Conversations
+      description: |
+        This endpoint returns a list of all Conversations created by the account associated with the API Key in use.
+      operationId: listConversations
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: "The number of conversations to return per page. Default is 10."
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number to return. Default is 1."
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: "Filter the conversations by status. Possible values: active, ended."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        conversation_id:
+                          type: string
+                          description: "A unique identifier for the conversation."
+                          example: "c123456"
+                        conversation_name:
+                          type: string
+                          description: "A name for the conversation."
+                          example: "A Meeting with Hassaan"
+                        status:
+                          type: string
+                          description: "The status of the video."
+                          example: "active"
+                        conversation_url:
+                          type: string
+                          description: "A direct link to join the conversation."
+                          example: "https://tavus.daily.co/c123456"
+                        callback_url:
+                          type: string
+                          description: "The url that will receive webhooks with updates of the conversation state."
+                          example: "https://yourwebsite.com/webhook"
+                        replica_id:
+                          type: string
+                          description: "A unique identifier for the replica used to create this conversation"
+                          example: "r79e1c033f"
+                        persona_id:
+                          type: string
+                          description: "A unique identifier for the persona used to create this conversation"
+                          example: "p5317866"
+                        created_at:
+                          type: string
+                          description: "The date and time the conversation was created."
+                          example: ""
+                        updated_at:
+                          type: string
+                          description: "The date and time of when the conversation was last updated."
+                  total_count:
+                    type: integer
+                    description: "The total number of conversations given the filters provided."
+      security:
+        - apiKey: []
+
+  /v2/conversations/{conversation_id}:
+    get:
+      tags:
+        - Conversations
+      summary: Get Conversation
+      description: |
+        This endpoint returns a single conversation by its unique identifier.
+      operationId: getConversation
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id:
+                    type: string
+                    example: "c123456"
+                    description: "A unique identifier for the conversation."
+                  conversation_name:
+                    type: string
+                    example: "A Meeting with Hassaan"
+                    description: "The name of the conversation."
+                  conversation_url:
+                    type: string
+                    example: "https://tavus.daily.co/c123456"
+                    description: "A direct link to join the conversation."
+                  callback_url:
+                    type: string
+                    description: "The url that will receive webhooks with updates of the conversation state."
+                    example: "https://yourwebsite.com/webhook"
+                  status:
+                    type: string
+                    description: "The status of the conversation."
+                    example: "active"
+                  replica_id:
+                    type: string
+                    description: "A unique identifier for the replica used to create this conversation"
+                    example: "r79e1c033f"
+                  persona_id:
+                    type: string
+                    description: "A unique identifier for the persona used to create this conversation"
+                    example: "p5317866"
+                  created_at:
+                    type: string
+                    example: ""
+                    description: "The date and time the conversation was created."
+                  updated_at:
+                    type: string
+                    example: ""
+                    description: "The date and time of when the conversation was last updated."
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Conversations
+      summary: Delete Conversation
+      description: |
+        This endpoint deletes a single conversation by its unique identifier.
+      operationId: deleteConversation
+      responses:
+        "204":
+          description: ""
+      security:
+        - apiKey: []
+
+    parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+
+  /v2/conversations/{conversation_id}/end:
+    post:
+      tags:
+        - Conversations
+      summary: End Conversation
+      description: |
+        This endpoint ends a single conversation by its unique identifier.
+      operationId: endConversation
+      responses:
+        "204":
+          description: ""
+      security:
+        - apiKey: []
+
+    parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+
+  /v2/personas:
+    post:
+      tags:
+        - Personas
+      summary: Create Persona
+      description: |
+        This endpoint creates a new persona that can be used by replicas in conversations. 
+
+        With a persona, you are able to craft the personalities of your replica across conversations.
+
+        #### LLM
+        With the `llm` layer, you can leverage your own OpenAI compatible LLM or you can use one a Tavus provided model.
+        - **tavus-gpt-4o:** The smartest option for complex interactions.
+        - **tavus-gpt-4o-mini:** A hybrid model that balances performance and intelligence.
+        - **tavus-llama:** The **default** choice if no LLM layer is provided. This is the fastest model, offering the best user-to-user (U2U) experience. It's on-premise, making it incredibly performant. 
+
+        [Get Started with Your Own LLM](/sections/conversational-video-interface/custom-llm-onboarding)
+
+        #### TTS
+        With Tavus' default TTS engine, you get the faster utterance-to-utterance speed, but you can always bring your own if you have voices already trained with:
+        - **Cartesia**
+        - **Elevenlabs**
+        - **Playht**
+
+        [Get Started with Your Own TTS](/sections/conversational-video-interface/custom-tts-onboarding)
+
+        #### STT
+        Although we support both, we highly recommend using `tavus-advanced` for higher transcription accuracy and non-English languages at little to no additional latency cost.
+        - **tavus-turbo:** Our lowest-latency model, but `tavus-advanced` provides higher transcription accuracy.
+        - **tavus-advanced:** Provides higher transcription accuracy.
+
+        [Get Started with Your Own STT](/sections/conversational-video-interface/custom-stt-onboarding)
+
+      operationId: createPersona
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                persona_name:
+                  type: string
+                  description: "A name for the persona."
+                  example: "Life Coach"
+                system_prompt:
+                  type: string
+                  description: "This is the system prompt that will be used by the llm."
+                  example: "As a Life Coach, you are a dedicated professional who specializes in..."
+                pipeline_mode:
+                  type: string
+                  description: "The pipeline mode to use for the persona. Possible values: `full`, `echo`. `full` will provide the default end-to-end experience. `echo` will turn off most steps, and allow the replica to sync video with audio passed in through Echo events, which it will speak out."
+                  enum:
+                    - "full"
+                    - "echo"
+                context:
+                  type: string
+                  description: "This is the context that will be used by the llm."
+                  example: "Here are a few times that you have helped an individual make a breakthrough in..."
+                default_replica_id:
+                  type: string
+                  description: "The default replica_id associated with this persona if one exists. When creating a conversation, a persona_id with a default_replica_id associated can we used to create a conversation without specifying a replica_id."
+                  example: "r79e1c033f"
+                layers:
+                  type: object
+                  properties:
+                    llm:
+                      type: object
+                      properties:
+                        model:
+                          type: string
+                          description: "The model name that will be used by the llm. To use Tavus' llms, you may select from the following models: `tavus-llama`, `tavus-gpt-4o`, `tavus-gpt-4o-mini`. If you would like to use your own OpenAI compatible llm, you may provide a `model`, `base_url`, and `api_key`."
+                        base_url:
+                          type: string
+                          description: "The base url for your OpenAI compatible endpoint."
+                          example: "your-base-url"
+                        api_key:
+                          type: string
+                          description: "The API key for the OpenAI compatible endpoint."
+                          example: "your-api-key"
+                        tools:
+                          type: array
+                          description: "Optional tools to provide to your custom LLM"
+                          example:
+                            [
+                              {
+                                "type": "function",
+                                "function":
+                                  {
+                                    "name": "get_current_weather",
+                                    "description": "Get the current weather in a given location",
+                                    "parameters":
+                                      {
+                                        "type": "object",
+                                        "properties":
+                                          {
+                                            "location":
+                                              {
+                                                "type": "string",
+                                                "description": "The city and state, e.g. San Francisco, CA",
+                                              },
+                                            "unit":
+                                              {
+                                                "type": "string",
+                                                "enum":
+                                                  ["celsius", "fahrenheit"],
+                                              },
+                                          },
+                                        "required": ["location"],
+                                      },
+                                  },
+                              },
+                            ]
+                        headers:
+                          type: object
+                          description: "Optional headers to provide to your custom LLM"
+                          example:
+                            {
+                              "Authorization": "Bearer your-api-key",
+                            }
+                        extra_body:
+                          type: object
+                          description: "Optional extra body to provide to your custom LLM"
+                          example:
+                            {
+                              "temperature": 0.5,
+                            }
+                    tts:
+                      type: object
+                      properties:
+                        api_key:
+                          type: string
+                          description: "The custodial API key to be used to make requests to the chosen TTS provider."
+                          example: "your-api-key"
+                        tts_engine:
+                          type: string
+                          description: "The TTS engine that will be used."
+                          enum:
+                            - "cartesia"
+                            - "elevenlabs"
+                            - "playht"
+                        external_voice_id:
+                          type: string
+                          description: "The voice ID used for the TTS engine when you want to customize your replica's voice. Choose from Cartesia's stock voices by referring to their [Voice Catalog](https://docs.cartesia.ai/api-reference/voices/list), or if you want more options you can consider [ElevenLabs](https://elevenlabs.io/docs/api-reference/voices/get-all) or [PlayHT](https://docs.play.ai/api-reference/text-to-speech/voices)."
+                          example: "external-voice-id"
+                        voice_settings:
+                          type: object
+                          description: "Optional voice settings to be used for the TTS engine. These vary depending on the TTS engine you are using."
+                          example:
+                            {
+                              "speed": "normal",
+                              "emotion": ["positivity:high", "curiosity"],
+                            }
+                        playht_user_id:
+                          type: string
+                          description: "The user ID, required if using Playht TTS."
+                          example: "your-playht-user-id"
+                        tts_emotion_control:
+                          type: boolean
+                          description: "If true, the TTS engine will be able to control the emotion of the voice. Only available for Cartesia TTS."
+                          example: "false"
+                        tts_model_name:
+                          type: string
+                          description: "The model name that will be used by the TTS engine. Please double check this with the TTS provider you are using to ensure valid model names."
+                          example: "sonic"
+                    perception:
+                      type: object
+                      properties:
+                        perception_model:
+                          type: string
+                          description: "The perception model to use. Options include `raven-0` for advanced multimodal perception or `basic` for simpler vision capabilities, and `off` to disable all perception."
+                          enum:
+                            - "raven-0"
+                            - "basic"
+                            - "off"
+                          example: "raven-0"
+                        ambient_awareness_queries:
+                          type: array
+                          description: "Custom queries that Raven will continuously monitor for in the visual stream. These provide ambient context without requiring explicit prompting."
+                          items:
+                            type: string
+                          example:
+                            [
+                              "Is the user showing an ID card?",
+                              "Does the user appear distressed or uncomfortable?",
+                            ]
+                        perception_tool_prompt:
+                          type: string
+                          description: "A prompt that details how and when to use the tools that are passed to the perception layer. This helps the replica understand the context of the perception tools and grounds it."
+                          example: "You have a tool to notify the system when an ID card is detected, named `notify_if_id_shown`. You MUST use this tool when a form of ID is detected."
+                        perception_tools:
+                          type: array
+                          description: "Tools that can be triggered based on visual context, enabling automated actions in response to visual cues."
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: "The name of the tool to be called."
+                              description:
+                                type: string
+                                description: "A description of what the tool does and when it should be called."
+                          example:
+                            [
+                              {
+                                type: "function",
+                                function: {
+                                  name: "notify_if_id_shown",
+                                  description: "Use this function when a drivers license or passport is detected in the image with high confidence. After collecting the ID, internally use final_ask()",
+                                  parameters: {
+                                    type: "object",
+                                    properties: {
+                                      id_type: {
+                                        type: "string",
+                                        description: "best guess on what type of ID it is",
+                                      },
+                                    },
+                                    required: ["id_type"],
+                                  },
+                                },
+                              },
+                            ]
+                    stt:
+                      type: object
+                      properties:
+                        stt_engine:
+                          type: string
+                          description: "The STT engine that will be used. `tavus-turbo` is our lowest-latency model, but `tavus-advanced` provides higher transcription accuracy. Please note that non-English languages will default to `tavus-advanced` if not specified."
+                          enum:
+                            - "tavus-turbo"
+                            - "tavus-advanced"
+                        participant_pause_sensitivity:
+                          type: string
+                          description: "Use this parameter to control how long of a pause you can take before the replica will respond to you. See more details [here](/sections/conversational-video-interface/custom-stt-onboarding). The default is `medium`, but you can adjust this to `low` or `high` depending on your needs."
+                          enum:
+                            - "high"
+                            - "medium"
+                            - "low"
+                            - "verylow"
+                            - "superlow"
+                        participant_interrupt_sensitivity:
+                          type: string
+                          description: "Use this parameter to control how long you can speak before the replica will be interrupted by you. See more details [here](/sections/conversational-video-interface/custom-stt-onboarding). The default is `medium`, but you can adjust this to `low` or `high` depending on your needs."
+                          enum:
+                            - "high"
+                            - "medium"
+                            - "low"
+                            - "verylow"
+                            - "superlow"
+                        hotwords:
+                          type: string
+                          description: "The hotwords parameter lets you provide example phrases that guide the STT model to prioritize certain words or phrases—especially names, technical terms, or uncommon language. For instance, including “Roey is the name of the person you’re speaking with” helps the model transcribe “Roey” correctly instead of “Rowie.”"
+                          example: "Roey is the name of the person you're speaking with."
+                        smart_turn_detection:
+                          type: boolean
+                          description: |
+                            Smart Turn Detection enhances the natural flow of conversation between participants and digital replicas. This intelligent system uses lexical and semantic analysis to determine the optimal moment for the digital replica to respond. The default value is set to true.
+
+                            **How it works:**
+                            - Continuously evaluates the participant's speech patterns and content
+                            - Assesses the likelihood that the participant has finished speaking
+                            - Multilingual 
+                            - Works seamlessly with both speculative and non-speculative inference,                             
+                            - Continuously uses participant speech patterns and content to determine how long to wait to respond.
+                            - Works in conjunction with the `participant_pause_sensitivity` setting, which adjusts the maximum pause for when participant is clearly not done.
+
+                            **Key benefits:**
+                            - **Rapid response:** Triggers quick replies when the participant has definitively concluded their statement.
+                            - **Extended listening:** Allows more time when the participant is clearly in the middle of expressing a thought.
+
+                            Enabling Smart Turn Detection creates a more natural and engaging conversational experience, allowing the digital replica to interact more seamlessly with human participants.
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  persona_id:
+                    type: string
+                    description: "A unique identifier for the persona."
+                    example: "p5317866"
+                  persona_name:
+                    type: string
+                    description: "The name of the persona."
+                    example: "Life Coach"
+                  created_at:
+                    type: string
+                    description: "The date and time the persona was created."
+      security:
+        - apiKey: []
+
+    get:
+      tags:
+        - Personas
+      summary: List Personas
+      description: |
+        This endpoint returns a list of all Personas created by the account associated with the API Key in use.
+      operationId: listPersonas
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: "The number of personas to return per page. Default is 10."
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number to return. Default is 1."
+        - in: query
+          name: persona_type
+          schema:
+            type: string
+            description: "Filter the personas by type. Possible values: user, system. System personas are personas that have been created by Tavus."
+            enum:
+              - user
+              - system
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        persona_id:
+                          type: string
+                          description: "A unique identifier for the persona."
+                          example: "p5317866"
+                        persona_name:
+                          type: string
+                          description: "A name for the persona."
+                          example: "Life Coach"
+                        system_prompt:
+                          type: string
+                          description: "The system prompt that will be used by the llm."
+                          example: "As a Life Coach, you are a dedicated professional who specializes in..."
+                        default_replica_id:
+                          type: string
+                          example: "r79e1c033f"
+                          description: "The default replica_id associated with this persona if one exists."
+                        context:
+                          type: string
+                          description: "The context that will be used by the llm."
+                          example: "Here are a few times that you have helped an individual make a breakthrough in..."
+                        layers:
+                          type: object
+                          properties:
+                            llm:
+                              type: object
+                              properties:
+                                model:
+                                  type: string
+                                  description: "The model name that will be used by the llm."
+                                base_url:
+                                  type: string
+                                  description: "The base URL for the OpenAI compatible endpoint if you are using your own llm."
+                                  example: "your-base-url"
+                                api_key:
+                                  type: string
+                                  description: "The API key for the OpenAI compatible endpoint if you are using your own llm."
+                                  example: "your-api-key"
+                                tools:
+                                  type: array
+                                  description: "Optional tools to provide to your custom LLM"
+                                  example:
+                                    [
+                                      {
+                                        "type": "function",
+                                        "function":
+                                          {
+                                            "name": "get_current_weather",
+                                            "description": "Get the current weather in a given location",
+                                            "parameters":
+                                              {
+                                                "type": "object",
+                                                "properties":
+                                                  {
+                                                    "location":
+                                                      {
+                                                        "type": "string",
+                                                        "description": "The city and state, e.g. San Francisco, CA",
+                                                      },
+                                                    "unit":
+                                                      {
+                                                        "type": "string",
+                                                        "enum":
+                                                          [
+                                                            "celsius",
+                                                            "fahrenheit",
+                                                          ],
+                                                      },
+                                                  },
+                                                "required": ["location"],
+                                              },
+                                          },
+                                      },
+                                    ]
+                            tts:
+                              type: object
+                              properties:
+                                api_key:
+                                  type: string
+                                  description: "The custodial API key to be used to make requests to the chosen TTS provider."
+                                  example: "your-api-key"
+                                tts_engine:
+                                  type: string
+                                  description: "The TTS engine that will be used."
+                                  enum:
+                                    - "cartesia"
+                                    - "elevenlabs"
+                                    - "playht"
+                                external_voice_id:
+                                  type: string
+                                  description: "The voice ID used for the TTS engine when you want to customize your replica's voice. Choose from Cartesia's stock voices by referring to their [Voice Catalog](https://docs.cartesia.ai/api-reference/voices/list), or if you want more options you can consider [ElevenLabs](https://elevenlabs.io/docs/api-reference/voices/get-all) or [PlayHT](https://docs.play.ai/api-reference/text-to-speech/voices)."
+                                  example: "external-voice-id"
+                                voice_settings:
+                                  type: object
+                                  description: "Optional voice settings to be used for the TTS engine. These vary depending on the TTS engine you are using."
+                                  example:
+                                    {
+                                      "speed": "normal",
+                                      "emotion":
+                                        ["positivity:high", "curiosity"],
+                                    }
+                                playht_user_id:
+                                  type: string
+                                  description: "The user ID, required if using Playht TTS."
+                                  example: "your-playht-user-id"
+                                tts_emotion_control:
+                                  type: boolean
+                                  description: "If true, the TTS engine will be able to control the emotion of the voice. Only available for Cartesia TTS."
+                                  example: "false"
+                                tts_model_name:
+                                  type: string
+                                  description: "The model name that will be used by the TTS engine. Please double check this with the TTS provider you are using to ensure valid model names."
+                                  example: "sonic"
+                            perception:
+                              type: object
+                              properties:
+                                perception_model:
+                                  type: string
+                                  description: "The perception model to use. Options include `raven-0` for advanced multimodal perception or `basic` for simpler vision capabilities, and `off` to disable all perception."
+                                  enum:
+                                    - "raven-0"
+                                    - "basic"
+                                    - "off"
+                                  example: "raven-0"
+                                ambient_awareness_queries:
+                                  type: array
+                                  description: "Custom queries that Raven will continuously monitor for in the visual stream. These provide ambient context without requiring explicit prompting."
+                                  items:
+                                    type: string
+                                  example:
+                                    [
+                                      "Is the user showing an ID card?",
+                                      "Does the user appear distressed or uncomfortable?",
+                                    ]
+                                perception_tool_prompt:
+                                  type: string
+                                  description: "A prompt that details how and when to use the tools that are passed to the perception layer. This helps the replica understand the context of the perception tools and grounds it."
+                                  example: "You have a tool to notify the system when an ID card is detected, named `notify_if_id_shown`. You MUST use this tool when a form of ID is detected."
+                                perception_tools:
+                                  type: array
+                                  description: "Tools that can be triggered based on visual context, enabling automated actions in response to visual cues."
+                                  items:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                        description: "The name of the tool to be called."
+                                      description:
+                                        type: string
+                                        description: "A description of what the tool does and when it should be called."
+                                  example:
+                                    [
+                                      {
+                                        type: "function",
+                                        function: {
+                                          name: "notify_if_id_shown",
+                                          description: "Use this function when a drivers license or passport is detected in the image with high confidence. After collecting the ID, internally use final_ask()",
+                                          parameters: {
+                                            type: "object",
+                                            properties: {
+                                              id_type: {
+                                                type: "string",
+                                                description: "best guess on what type of ID it is",
+                                              },
+                                            },
+                                            required: ["id_type"],
+                                          },
+                                        },
+                                      },
+                                    ]
+                            stt:
+                              type: object
+                              properties:
+                                stt_engine:
+                                  type: string
+                                  description: "The STT engine that will be used. `tavus-turbo` is our lowest-latency model, but `tavus-advanced` provides higher transcription accuracy. Please note that non-English languages will default to `tavus-advanced` if not specified."
+                                  enum:
+                                    - "tavus-turbo"
+                                    - "tavus-advanced"
+                                participant_pause_sensitivity:
+                                  type: string
+                                  description: "Use this parameter to control how long of a pause you can take before the replica will respond to you. See more details [here](/sections/conversational-video-interface/custom-stt-onboarding). The default is `medium`, but you can adjust this to `low` or `high` depending on your needs."
+                                  enum:
+                                    - "low"
+                                    - "medium"
+                                    - "high"
+                                participant_interrupt_sensitivity:
+                                  type: string
+                                  description: "Use this parameter to control how long you can speak before the replica will be interrupted by you. See more details [here](/sections/conversational-video-interface/custom-stt-onboarding). The default is `medium`, but you can adjust this to `low` or `high` depending on your needs."
+                                  enum:
+                                    - "low"
+                                    - "medium"
+                                    - "high"
+                                hotwords:
+                                  type: string
+                                  description: "The hotwords that will be used for the STT engine."
+                                  example: "This is a hotword example"
+                                smart_turn_detection:
+                                  type: boolean
+                                  description: |
+                                    Smart Turn Detection enhances the natural flow of conversation between participants and digital replicas. This intelligent system uses lexical and semantic analysis to determine the optimal moment for the digital replica to respond. The default value is set to true.
+
+                                    **How it works:**
+                                    - Continuously evaluates the participant's speech patterns and content
+                                    - Assesses the likelihood that the participant has finished speaking
+                                    - Multilingual, support for 100 languages 
+                                    - Works seamlessly with both speculative and non-speculative inference,                             
+                                    - Continuously uses participant speech patterns and content to determine how long to wait to respond.
+                                    - Works in conjunction with the `participant_pause_sensitivity` setting, which adjusts the maximum pause for when participant is clearly not done.
+
+                                    **Key benefits:**
+                                    - **Rapid response:** Triggers quick replies when the participant has definitively concluded their statement.
+                                    - **Extended listening:** Allows more time when the participant is clearly in the middle of expressing a thought.
+
+                                    Enabling Smart Turn Detection creates a more natural and engaging conversational experience, allowing the digital replica to interact more seamlessly with human participants.
+                        created_at:
+                          type: string
+                          description: "The date and time the persona was created."
+                          example: ""
+                        updated_at:
+                          type: string
+                          description: "The date and time of when the persona was last updated."
+                  total_count:
+                    type: integer
+                    description: "The total number of personas given the filters provided."
+      security:
+        - apiKey: []
+
+  /v2/personas/{persona_id}:
+    get:
+      tags:
+        - Personas
+      summary: Get Persona
+      description: |
+        This endpoint returns a single persona by its unique identifier.
+      operationId: getPersona
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        persona_id:
+                          type: string
+                          description: "A unique identifier for the persona."
+                          example: "p5317866"
+                        persona_name:
+                          type: string
+                          description: "A name for the persona."
+                          example: "Life Coach"
+                        system_prompt:
+                          type: string
+                          description: "The system prompt that will be used by the llm."
+                          example: "As a Life Coach, you are a dedicated professional who specializes in..."
+                        default_replica_id:
+                          type: string
+                          example: "r79e1c033f"
+                          description: "The default replica_id associated with this persona if one exists."
+                        context:
+                          type: string
+                          description: "The context that will be used by the llm."
+                          example: "Here are a few times that you have helped an individual make a breakthrough in..."
+                        layers:
+                          type: object
+                          properties:
+                            llm:
+                              type: object
+                              properties:
+                                model:
+                                  type: string
+                                  description: "The model name that will be used by the llm."
+                                base_url:
+                                  type: string
+                                  description: "The base URL for the OpenAI compatible endpoint if you are using your own llm."
+                                  example: "your-base-url"
+                                api_key:
+                                  type: string
+                                  description: "The API key for the OpenAI compatible endpoint if you are using your own llm."
+                                  example: "your-api-key"
+                                tools:
+                                  type: array
+                                  description: "Optional tools to provide to your custom LLM"
+                                  example:
+                                    [
+                                      {
+                                        "type": "function",
+                                        "function":
+                                          {
+                                            "name": "get_current_weather",
+                                            "description": "Get the current weather in a given location",
+                                            "parameters":
+                                              {
+                                                "type": "object",
+                                                "properties":
+                                                  {
+                                                    "location":
+                                                      {
+                                                        "type": "string",
+                                                        "description": "The city and state, e.g. San Francisco, CA",
+                                                      },
+                                                    "unit":
+                                                      {
+                                                        "type": "string",
+                                                        "enum":
+                                                          [
+                                                            "celsius",
+                                                            "fahrenheit",
+                                                          ],
+                                                      },
+                                                  },
+                                                "required": ["location"],
+                                              },
+                                          },
+                                      },
+                                    ]
+                                headers:
+                                  type: object
+                                  description: "Optional headers to provide to your custom LLM"
+                                  example:
+                                    {
+                                      "Authorization": "Bearer your-api-key",
+                                    }
+                                extra_body:
+                                  type: object
+                                  description: "Optional extra body to provide to your custom LLM"
+                                  example:
+                                    {
+                                      "temperature": 0.5,
+                                    }
+                            tts:
+                              type: object
+                              properties:
+                                api_key:
+                                  type: string
+                                  description: "The custodial API key to be used to make requests to the chosen TTS provider."
+                                  example: "your-api-key"
+                                tts_engine:
+                                  type: string
+                                  description: "The TTS engine that will be used."
+                                  enum:
+                                    - "cartesia"
+                                    - "elevenlabs"
+                                    - "playht"
+                                external_voice_id:
+                                  type: string
+                                  description: "The voice ID used for the TTS engine when you want to customize your replica's voice. Choose from Cartesia's stock voices by referring to their [Voice Catalog](https://docs.cartesia.ai/api-reference/voices/list), or if you want more options you can consider [ElevenLabs](https://elevenlabs.io/docs/api-reference/voices/get-all) or [PlayHT](https://docs.play.ai/api-reference/text-to-speech/voices)."
+                                  example: "external-voice-id"
+                                voice_settings:
+                                  type: object
+                                  description: "Optional voice settings to be used for the TTS engine. These vary depending on the TTS engine you are using."
+                                  example:
+                                    {
+                                      "speed": "normal",
+                                      "emotion":
+                                        ["positivity:high", "curiosity"],
+                                    }
+                                playht_user_id:
+                                  type: string
+                                  description: "The user ID, required if using Playht TTS."
+                                  example: "your-playht-user-id"
+                                tts_emotion_control:
+                                  type: boolean
+                                  description: "If true, the TTS engine will be able to control the emotion of the voice. Only available for Cartesia TTS."
+                                  example: "false"
+                                tts_model_name:
+                                  type: string
+                                  description: "The model name that will be used by the TTS engine. Please double check this with the TTS provider you are using to ensure valid model names."
+                                  example: "sonic"
+                            perception:
+                              type: object
+                              properties:
+                                perception_model:
+                                  type: string
+                                  description: "The perception model to use. Options include `raven-0` for advanced multimodal perception or `basic` for simpler vision capabilities, and `off` to disable all perception."
+                                  enum:
+                                    - "raven-0"
+                                    - "basic"
+                                    - "off"
+                                  example: "raven-0"
+                                ambient_awareness_queries:
+                                  type: array
+                                  description: "Custom queries that Raven will continuously monitor for in the visual stream. These provide ambient context without requiring explicit prompting."
+                                  items:
+                                    type: string
+                                  example:
+                                    [
+                                      "Is the user showing an ID card?",
+                                      "Does the user appear distressed or uncomfortable?",
+                                    ]
+                                perception_tool_prompt:
+                                  type: string
+                                  description: "A prompt that details how and when to use the tools that are passed to the perception layer. This helps the replica understand the context of the perception tools and grounds it."
+                                  example: "You have a tool to notify the system when an ID card is detected, named `notify_if_id_shown`. You MUST use this tool when a form of ID is detected."
+                                perception_tools:
+                                  type: array
+                                  description: "Tools that can be triggered based on visual context, enabling automated actions in response to visual cues."
+                                  items:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                        description: "The name of the tool to be called."
+                                      description:
+                                        type: string
+                                        description: "A description of what the tool does and when it should be called."
+                                  example:
+                                    [
+                                      {
+                                        type: "function",
+                                        function: {
+                                          name: "notify_if_id_shown",
+                                          description: "Use this function when a drivers license or passport is detected in the image with high confidence. After collecting the ID, internally use final_ask()",
+                                          parameters: {
+                                            type: "object",
+                                            properties: {
+                                              id_type: {
+                                                type: "string",
+                                                description: "best guess on what type of ID it is",
+                                              },
+                                            },
+                                            required: ["id_type"],
+                                          },
+                                        },
+                                      },
+                                    ]
+                            stt:
+                              type: object
+                              properties:
+                                stt_engine:
+                                  type: string
+                                  description: "The STT engine that will be used. `tavus-turbo` is our lowest-latency model, but `tavus-advanced` provides higher transcription accuracy. Please note that non-English languages will default to `tavus-advanced` if not specified."
+                                  enum:
+                                    - "tavus-turbo"
+                                    - "tavus-advanced"
+                                participant_pause_sensitivity:
+                                  type: string
+                                  description: "Use this parameter to control how long of a pause you can take before the replica will respond to you. See more details [here](/sections/conversational-video-interface/custom-stt-onboarding). The default is `medium`, but you can adjust this to `low` or `high` depending on your needs."
+                                  enum:
+                                    - "low"
+                                    - "medium"
+                                    - "high"
+                                participant_interrupt_sensitivity:
+                                  type: string
+                                  description: "Use this parameter to control how long you can speak before the replica will be interrupted by you. See more details [here](/sections/conversational-video-interface/custom-stt-onboarding). The default is `medium`, but you can adjust this to `low` or `high` depending on your needs."
+                                  enum:
+                                    - "low"
+                                    - "medium"
+                                    - "high"
+                                hotwords:
+                                  type: string
+                                  description: "The hotwords that will be used for the STT engine."
+                                  example: "This is a hotword example"
+                                smart_turn_detection:
+                                  type: boolean
+                                  description: |
+                                    Smart Turn Detection enhances the natural flow of conversation between participants and digital replicas. This intelligent system uses lexical and semantic analysis to determine the optimal moment for the digital replica to respond. The default value is set to true.
+
+                                    **How it works:**
+                                    - Continuously evaluates the participant's speech patterns and content
+                                    - Assesses the likelihood that the participant has finished speaking
+                                    - Multilingual, support for 100 languages 
+                                    - Works seamlessly with both speculative and non-speculative inference,                             
+                                    - Continuously uses participant speech patterns and content to determine how long to wait to respond.
+                                    - Works in conjunction with the `participant_pause_sensitivity` setting, which adjusts the maximum pause for when participant is clearly not done.
+
+                                    **Key benefits:**
+                                    - **Rapid response:** Triggers quick replies when the participant has definitively concluded their statement.
+                                    - **Extended listening:** Allows more time when the participant is clearly in the middle of expressing a thought.
+
+                                    Enabling Smart Turn Detection creates a more natural and engaging conversational experience, allowing the digital replica to interact more seamlessly with human participants.
+                        created_at:
+                          type: string
+                          description: "The date and time the persona was created."
+                          example: ""
+                        updated_at:
+                          type: string
+                          description: "The date and time of when the persona was last updated."
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Personas
+      summary: Delete Persona
+      description: |
+        This endpoint deletes a single persona by its unique identifier.
+      operationId: deletePersona
+      responses:
+        "204":
+          description: ""
+      security:
+        - apiKey: []
+
+    patch:
+      tags:
+        - Personas
+      summary: Patch Persona 
+      description: |
+        This updates the persona with the provided JSON patch. The patch should follow the JSON Patch format (RFC 6902) which allows for operations like add, remove, replace, copy, move, and test.
+
+        For example, to update the LLM layer of the persona, you can use the following JSON patch body:
+
+        ```json
+        [
+          {"op": "add", "path": "/layers/llm/model", "value": "your-model"},
+          {"op": "add", "path": "/layers/llm/base_url", "value": "https://api.tavus.ai"},
+          {"op": "add", "path": "/layers/llm/api_key", "value": "api_key_123"}
+        ]
+        ```
+      operationId: patchPersona
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  op:
+                    type: string
+                    description: "The operation to perform. Must be one of: add, remove, replace, copy, move, test"
+                    enum: ["add", "remove", "replace", "copy", "move", "test"]
+                    example: "add"
+                  path:
+                    type: string
+                    description: "A JSON Pointer string that references a location within the target document where the operation is performed"
+                    example: "/layers/llm/model"
+                  value:
+                    type: string
+                    description: "The value to be used within the operation. Required for add and replace operations"
+                    example: "tavus-llama"
+                required:
+                  - op
+                  - path
+                  - value
+      responses:
+        "200":
+          description: "OK"
+        "304":
+          description: "No changes were made to the persona"
+        "400":
+          description: "Persona ID not found"
+        "422":
+          description: "Invalid JSON patch format"
+      security:
+        - apiKey: []
+
+    parameters:
+      - name: persona_id
+        in: path
+        required: true
+        schema:
+          type: string
+    
+
+  /v2/transcriptions:
+    post:
+      tags:
+        - Transcriptions
+      summary: Create Transcription
+      description: |
+        This endpoint creates a transcription request that will convert speech to text in your video content.
+      operationId: createTranscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file_url:
+                  type: string
+                  description: "A direct link to the video that will be transcribed. This should be a publicly accessible / presigned S3 URL."
+                  example: "https://example.com/video.mp4"
+                callback_url:
+                  type: string
+                  description: "A url that will receive a callback on completion of the transcription or on error."
+                  example: "https://your-callback-url.com"
+              required:
+                - file_url
+                - callback_url
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transcription_id:
+                    type: string
+                    example: "t0108f2d24k2a"
+                    description: "A unique identifier for the transcription."
+                  status:
+                    type: string
+                    description: "The status of the transcription."
+                  callback_url:
+                    type: string
+                    description: "The callback URL provided in the request."
+                    example: "https://your-callback-url.com"
+      security:
+        - apiKey: []
+
+    get:
+      tags:
+        - Transcriptions
+      summary: List Transcriptions
+      description: |
+        This endpoint returns a list of all Transcriptions created by the account associated with the API Key in use.
+      operationId: listTranscriptions
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: "The number of transcriptions to return per page. Default is 10."
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "The page number to return. Default is 1."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        transcription_id:
+                          type: string
+                          description: "A unique identifier for the transcription."
+                          example: "t0108f2d24k2a"
+                        file_url:
+                          type: string
+                          description: "The URL of the file that was transcribed."
+                          example: "https://example.com/video.mp4"
+                        text:
+                          type: string
+                          description: "The transcribed text from the video."
+                        status:
+                          type: string
+                          description: "The status of the transcription. Can be either `started`, `completed`, or `error`."
+                        created_at:
+                          type: string
+                          description: "The date and time the transcription was created."
+                  total_count:
+                    type: integer
+                    description: "The total number of transcriptions that fit the query."
+      security:
+        - apiKey: []
+
+  /v2/transcriptions/{transcription_id}:
+    get:
+      tags:
+        - Transcriptions
+      summary: Get Transcription
+      description: |
+        This endpoint returns a single transcription by its unique identifier.
+      operationId: getTranscription
+      parameters:
+        - in: path
+          name: transcription_id
+          required: true
+          schema:
+            type: string
+          description: "A unique identifier for the transcription."
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transcription_id:
+                    type: string
+                    example: "t0108f2d24k2a"
+                    description: "A unique identifier for the transcription."
+                  file_url:
+                    type: string
+                    description: "The URL of the file that was transcribed."
+                    example: "https://example.com/video.mp4"
+                  text:
+                    type: string
+                    description: "The transcribed text from the video."
+                  status:
+                    type: string
+                    description: "The status of the transcription."
+                  created_at:
+                    type: string
+                    description: "The date and time the transcription was created."
+      security:
+        - apiKey: []
+
+    delete:
+      tags:
+        - Transcriptions
+      summary: Delete Transcription
+      description: |
+        This endpoint deletes a single transcription by its unique identifier.
+      operationId: deleteTranscription
+      parameters:
+        - in: path
+          name: transcription_id
+          required: true
+          schema:
+            type: string
+          description: "A unique identifier for the transcription."
+      responses:
+        "204":
+          description: ""
+      security:
+        - apiKey: []
+
+tags:
+  - name: Videos
+  - name: Replicas
+  - name: Conversations
+  - name: Personas
+  - name: Speech
+  - name: Replacements
+  - name: Transcriptions
+
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+  schemas:
+    utterance:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent back. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.utterance"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+        inference_id:
+          type: string
+          description: "This is a unique identifier for a given utterance. In this case, it will be the utterance the replica is speaking."
+          example: "83294d9f-8306-491b-a284-791f56c8383f"
+        properties:
+          type: object
+          description: "This object will contain the `speech` property which contains the contents of the utterance and will optionally contain the `visual_context` property."
+          properties:
+            role:
+              type: string
+              description: "Indicicates who spoke the utterance. Possible values: `user`, `replica`."
+            speech:
+              type: string
+              description: "The content of the utterance."
+              example: "Hello, how are you?"
+            visual_context:
+              type: string
+              description: "If VQA is enabled for the conversation, `visual_context` will contain the description of the user frame. This property will not be included in every utterance event. It will only be included when a visual frame has been captured which occurs every 4 seconds."
+              example: "There is a man wearing over-ear headphones in a room that seems to be in an office setting, with monitors in the background. The man seems happy, and is looking at the screen."
+          required:
+            - speech
+    perception_analysis:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent back. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.perception_analysis"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+        properties:
+          type: object
+          description: "This object will contain the `analysis` property which contains the full visual analysis summary."
+          properties:
+            analysis:
+              type: string
+              description: "The full analysis of visual artifacts detected throughout the call. This is only available when the persona has `raven-0` specified in the Perception Layer."
+              example: "Throughout our conversation, I noticed you were in what appears to be a home office environment. You were wearing glasses and occasionally gestured with your hands when explaining concepts. Your facial expressions generally indicated engagement and interest, particularly when discussing technical details. There was a bookshelf visible in the background with what appeared to be technical reference materials."
+          required:
+            - analysis
+    perception_tool_call:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent back. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.perception_tool_call"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+        properties:
+          type: object
+          description: "This object will contain the `name`, `arguments`, and `frames` properties related to the perception tool call."
+          properties:
+            name:
+              type: string
+              description: "The name of the perception tool that was called."
+              example: "notify_if_id_shown"
+            arguments:
+              type: object
+              description: "The arguments passed to the perception tool."
+              example: { "date_of_birth": "1990-01-01" }
+            frames:
+              type: array
+              description: "Encoded frames that triggered the perception tool call."
+              items:
+                type: string
+              example: ["base64_encoded_frame_data"]
+          required:
+            - name
+            - arguments
+            - frames
+    tool_call:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent back. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.tool_call"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+        inference_id:
+          type: string
+          description: "This is a unique identifier for a given utterance. In this case, it will be the user utterance that triggered the tool call."
+          example: "83294d9f-8306-491b-a284-791f56c8383f"
+        properties:
+          type: object
+          description: "This object will contain the `name` and `arguments` properties that have been extracted from the `ChoiceDeltaToolCallFunction` object"
+          properties:
+            name:
+              type: string
+              description: "The name of the function that needs to be called."
+              example: "get_current_weather"
+            arguments:
+              type: string
+              description: "The arguments to be passed to the function."
+              example: '{"location": "San Francisco, CA"}'
+          required:
+            - name
+            - arguments
+    user:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This event occurs when the user either starts speaking, or stops speaking."
+          example: "conversation.user.started_speaking"
+          enum:
+            - "conversation.user.started_speaking"
+            - "conversation.user.stopped_speaking"
+        inference_id:
+          type: string
+          description: "This is a unique identifier for a given utterance. In this case, it will be the utterance the user is speaking."
+          example: "83294d9f-8306-491b-a284-791f56c8383f"
+    replica:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This event occurs when the replica either starts actually speaking audio, or stops actually speaking audio."
+          example: "conversation.replica.started_speaking"
+          enum:
+            - "conversation.replica.started_speaking"
+            - "conversation.replica.stopped_speaking"
+        inference_id:
+          type: string
+          description: "This is a unique identifier for a given utterance. In this case, it will be the utterance the replica is speaking."
+          example: "83294d9f-8306-491b-a284-791f56c8383f"
+    sensitivity:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent back. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.sensitivity"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+        properties:
+          type: object
+          properties:
+            participant_pause_sensitivity:
+              type: string
+              description: "Use this parameter to control how long of a pause you can take before the replica will respond to you. See more details [here](/sections/conversational-video-interface/custom-stt-onboarding). The default is `medium`, but you can adjust this to `low` or `high` depending on your needs."
+              enum:
+                - "low"
+                - "medium"
+                - "high"
+              example: "medium"
+            participant_interrupt_sensitivity:
+              type: string
+              description: "Use this parameter to control how long you can speak before the replica will be interrupted by you. See more details [here](/sections/conversational-video-interface/custom-stt-onboarding). The default is `medium`, but you can adjust this to `low` or `high` depending on your needs."
+              enum:
+                - "low"
+                - "medium"
+                - "high"
+              example: "medium"
+          required:
+            - participant_pause_sensitivity
+            - participant_interrupt_sensitivity
+    overwrite_ll_context:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent back. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.overwrite_llm_context"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+        properties:
+          type: object
+          properties:
+            context:
+              type: string
+              description: "The new conversational context that will be used by the llm."
+              example: "This is some new context for the replica."
+          required:
+            - context
+
+    echo:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent back. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.echo"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+        properties:
+          type: object
+          properties:
+            modality:
+              type: string
+              description: "The input type for this event. Possible values: `audio`, `text`."
+              example: "text"
+            text:
+              type: string
+              description: "If `modality` is set to `text`, this property will include the text that the replica will speak out loud."
+              example: "Hey there Tim, long time no see!"
+            audio:
+              type: string
+              description: "If `modality` is set to `audio`, this property will include the base64 encoded audio that the replica will speak out loud. While we recommend a sample rate of 24000Hz for higher quality, we will default to 16000 to ensure backwards compatibility"
+              example: "base64-encoded-audio"
+            sample_rate:
+              type: integer
+              description: "The sample rate of the incoming base64 encoded audio. We recommend 24000, but this will default to `16000` if not provided to ensure backwards compatibility."
+              default: 16000
+              example: 24000
+            inference_id:
+              type: string
+              description: |
+                This is a unique identifier for a given utterance. You may send multiple messages with the same `inference_id` to indicate that they are part of the same utterance. 
+
+                If this property is not provided and subsequent messages are sent before the replica has finished speaking, the subsequent messages will interrupt the replica and the replica will start speaking the most recent audio.
+              example: "inference-id-123"
+            done:
+              type: boolean
+              description: |
+                If `done` is not set to `True`, we will stream the audio chunks to the replica until we receive a final echo event where `done` is set to `True`, which indicates that all of the audio has been sent for that utterance. 
+
+                If you are sending all audio in one event, you may set `done` to `True`.
+
+                If `done` is never set to `True`, we cannot guarantee that the replica will speak all of the audio.
+              example: "true"
+          required:
+            - modality
+
+    realtime_api:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.realtime_api"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+        properties:
+          type: object
+          description: "The properties act as a way to forward realtime events from Tavus to OpenAI. Pass your OpenAI realtime event body in here."
+          example:
+            {
+              "type": "session.update",
+              "session":
+                {
+                  "instructions": "You are a helpful assistant. Only respond in French from now on.",
+                },
+            }
+
+    interrupt:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent back. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.interrupt"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+
+    replica_interrupted:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent back. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.replica_interrupted"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+        inference_id:
+          type: string
+          description: "This is a unique identifier for a given utterance. In this case, it will be the utterance of the replica, that was interrupted by the user."
+          example: "inference-id-123"
+
+    respond:
+      type: object
+      properties:
+        message_type:
+          type: string
+          description: "Message type indicates what product this event will be used for. In this case, the message_type will be `conversation`"
+          example: "conversation"
+        event_type:
+          type: string
+          description: "This is the type of event that is being sent back. This field will be present on all events and can be used to distinguish between different event types."
+          example: "conversation.respond"
+        conversation_id:
+          type: string
+          description: "The unique identifier for the conversation."
+          example: "c123456"
+        properties:
+          type: object
+          properties:
+            text:
+              type: string
+              description: "What the replica will respond to."
+              example: "Can you tell me the secrets of the universe?"
+          required:
+            - text
+
+security:
+  - apiKey: []

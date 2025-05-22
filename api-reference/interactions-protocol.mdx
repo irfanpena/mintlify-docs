@@ -1,0 +1,56 @@
+---
+title: Interactions Protocol
+---
+
+
+### Introduction
+The Interactions Protocol allows users to interact dynamically with the Replica live during an active conversation via broadcasting and receiving `events`.
+
+Using the Interactions Protocol, you can:
+- Keep track of utterances spoken by the user or the replica
+- Overwrite the conversational context of the replica during an active conversation
+- Get the replica to echo the text you send it directly
+- Send external interrupts
+
+### Setup
+The Interactions Protocol uses the Daily data channel to broadcast and receive events between the user and the replica.
+
+To broadcast and listen for events, a [Daily Call Client](https://docs.daily.co/reference/daily-js/daily-call-client) will need to be instantiated on the client side using a `conversation_url`.
+
+Once a call client is created, an [event listener](https://docs.daily.co/reference/daily-js/events) can be created that takes action on receiving an [app-message](https://docs.daily.co/reference/daily-js/events/participant-events#app-message) event.
+
+By default, Tavus will broadcast [utterance events](/api-reference/event-schemas/conversation-utterance) when a replica begins speaking. At that time, both the user's utterance and the replica's utterance will be sent together. This allows the client to receive accurate transcription of what is occurring in the call.
+
+Tavus will also broadcast [tool call events](/api-reference/event-schemas/conversation-toolcall) when an LLM tool call should be made. This will allow the client to make calls to external APIs or databases.
+
+Tavus will broadcast
+[replica-started/stopped-speaking-event](/api-reference/event-schemas/conversation-replica-start-stop-speaking-event) when the replica actually starts or stops speaking. 
+
+The client is able to interact with the replica in real time by broadcasting an [app-message](https://docs.daily.co/reference/daily-js/events/participant-events#app-message) to the Daily Room. Broadcasting a message can be accomplished by using [sendAppMessage()](https://docs.daily.co/reference/daily-js/instance-methods/send-app-message). 
+
+Upon receiving the message, the replica will act on the broadcasted message.
+
+----
+Schemas for the events can be found here:
+
+[Utterance Events](/api-reference/event-schemas/conversation-utterance)
+
+[Conversational Context Overwrite](/api-reference/event-schemas/conversation-overwrite-context)
+
+[Echo Events](/api-reference/event-schemas/conversation-echo)
+
+[Interrupt Events](/api-reference/event-schemas/conversation-interrupt)
+
+[Sensitivity Interraction](/api-reference/event-schemas/conversation-sensitivity)
+
+[Respond Events](/api-reference/event-schemas/conversation-respond)
+
+[Tool Call Events](/api-reference/event-schemas/conversation-toolcall)
+
+[Realtime API Events](/api-reference/event-schemas/conversation-realtime-api)
+
+[Perception Analysis](/api-reference/event-schemas/conversation-perception-analysis)
+
+[Perception Tool Call Events](/api-reference/event-schemas/conversation-perception-tool-call)
+
+[Replica Started / Stopped Speaking Events](/api-reference/event-schemas/conversation-replica-start-stop-speaking-event)

@@ -1,0 +1,68 @@
+---
+title: Quickstart
+description: Learn how to quickly make your first Conversation API Request using a stock persona and replica.
+---
+
+## Create a Conversation
+<Steps>
+<Step title="Step 1: Get an API Key" titleSize="h3">
+Ensure you have created the Tavus API Key to access the Tavus API by following the steps here.
+</Step>
+<Step title="Step 2: Make your First Conversation" titleSize="h3">
+
+<Note>
+**Note**: In this example, we will use stock replica ID ***re8e740a42*** (Nathan) and stock persona ID ***pdced222244b*** (Sales Coach) with all conversation customizations except recording.
+</Note>
+
+Use the following request body example:
+```shell cURL
+curl --request POST \
+  --url https://tavusapi.com/v2/conversations \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <your_api_key>' \
+  --data '{
+  "persona_id": "pdced222244b",
+  "replica_id": "re8e740a42",
+  "conversation_name": "Improve Sales Technique",
+  "conversational_context": "I want to improve my sales techniques. Help me practice handling common objections from clients and closing deals more effectively.",
+  "properties": {
+    "max_call_duration": 1800,
+    "participant_left_timeout": 60,
+    "participant_absent_timeout": 120,
+    "language": "spanish",
+    "enable_closed_captions": true,
+    "apply_greenscreen": true
+
+   }
+}'
+
+```
+The request example above includes the following customizations:
+| Parameter | Description |
+| :---- | :---- |
+| `max_call_durations` | Sets the maximum call length in seconds. Maximum: 3600 seconds. |
+| `participant_left_timeout` | Time (in seconds) to wait before ending the call after the last participant leaves. Default: 0\. |
+| `participant_absent_timeout` | Time (in seconds) to end the call if no one joins after it's created. Default: 300\. |
+| `language` | Sets the conversation language. See the [Language Support](#) article for supported options. |
+| `enable_closed_captions` | Enables closed captions during the call. |
+| `apply_greenscreen` | Applies a green screen effect to the AI agent’s background. |
+
+<Note>
+**Note**: Please see the [Recording](#) article to enable the Recording feature.
+</Note>
+</Step>
+<Step title="Step 3: Join the Conversation" titleSize="h3">
+To join the conversation, click the link in the ***conversation_url*** field from the response:
+
+```json
+{
+  "conversation_id": "ca4301628cb9",
+  "conversation_name": "Improve Sales Technique",
+  "conversation_url": "<conversation_link>",
+  "status": "active",
+  "callback_url": "",
+  "created_at": "2025-05-13T06:42:58.291561Z"
+}
+```
+</Step>
+</Steps>

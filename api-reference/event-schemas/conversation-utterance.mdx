@@ -1,0 +1,12 @@
+---
+title: Utterance
+openapi-schema: utterance
+description: |
+    This is an event broadcasted by Tavus.
+
+    An `utterance event` is broadcasted by Tavus at specific times: the user’s utterance is sent when the replica begins speaking, and a separate event for the replica’s utterance is also sent as the replica starts to speak. Each event contains the content of the respective utterance as well as an indication of who spoke it.
+
+    An `utterance` includes all of the words spoken by the user or replica measured from when the person started speaking to when they finshed speaking. This could include multiple sentences or phrases.
+
+    Utterance events can be used to keep track of what the user or the replica has said.
+---

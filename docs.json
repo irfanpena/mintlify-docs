@@ -9,95 +9,63 @@
   },
   "favicon": "/favicon.png",
   "navigation": {
-    "anchors": [
+    "tabs": [
       {
-        "anchor": "Documentation",
-        "icon": "book-open",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Changelog",
+            "group": "Getting Started",
+            "pages": ["sections/introduction", "sections/quickstart", "sections/models"]
+          },
+          {
+            "group": "Developer Guides",
             "pages": [
-              "changelog-1"
+              "sections/conversational-video-interface/overview-cvi",
+              {
+                "group": "Conversation",
+                "pages": [
+                  "sections/conversational-video-interface/conversation/overview",
+                  "sections/conversational-video-interface/conversation/quickstart",
+                  {
+                    "group": "Customizations",
+                    "pages": [
+                      "sections/conversational-video-interface/conversation/customizations/recording"
+                    ]
+                  },
+                  {
+                    "group": "Conversational Use Cases",
+                    "pages": [
+                      "sections/conversational-video-interface/conversation/usecases/tavus-researcher",
+                      "sections/conversational-video-interface/conversation/usecases/ai-interviewer",
+                      "sections/conversational-video-interface/conversation/usecases/history-teacher",
+                      "sections/conversational-video-interface/conversation/usecases/sales-coach"
+                    ]
+                  }
+                ]
+              }
             ]
+          },
+          {
+            "group": "Resources",
+            "pages": ["sections/changelog/changelog"]
           }
         ]
-      },
-      {
-        "anchor": "API Reference",
-        "icon": "terminal",
-        "groups": [
-          {
-            "group": "Phoenix Replicas",
-            "pages": [
-              "api-reference/phoenix-replica-model/create-replica",
-              "api-reference/phoenix-replica-model/get-replica",
-              "api-reference/phoenix-replica-model/get-replicas",
-              "api-reference/phoenix-replica-model/delete-replica",
-              "api-reference/phoenix-replica-model/patch-replica-name"
-            ]
-          },
-          {
-            "group": "Videos",
-            "pages": [
-              "api-reference/video-request/create-video",
-              "api-reference/video-request/get-video",
-              "api-reference/video-request/get-videos",
-              "api-reference/video-request/delete-video",
-              "api-reference/video-request/patch-video-name"
-            ]
-          },
-          {
-            "group": "Conversational Video Interface",
-            "pages": [
-              "api-reference/conversations/create-conversation",
-              "api-reference/conversations/get-conversation",
-              "api-reference/conversations/get-conversations",
-              "api-reference/conversations/end-conversation",
-              "api-reference/conversations/delete-conversation"
-            ]
-          },
-          {
-            "group": "Replica Personas",
-            "pages": [
-              "api-reference/personas/create-persona",
-              "api-reference/personas/get-persona",
-              "api-reference/personas/get-personas",
-              "api-reference/personas/patch-persona-context",
-              "api-reference/personas/delete-persona"
-            ]
-          },
-          {
-            "group": "Lipsync",
-            "pages": [
-              "api-reference/lipsync/create-lipsync",
-              "api-reference/lipsync/get-lipsync",
-              "api-reference/lipsync/get-lipsync-list",
-              "api-reference/lipsync/delete-lipsync"
-            ]
-          },
-          {
-            "group": "Speech",
-            "pages": [
-              "api-reference/speech/create-speech",
-              "api-reference/speech/get-speech",
-              "api-reference/speech/get-speech-list",
-              "api-reference/speech/delete-speech",
-              "api-reference/speech/patch-speech-name"
-            ]
-          }
-        ]
-      },
-      {
-        "anchor": "Community",
-        "href": "https://discord.gg/5Y9Er6WNN5",
-        "icon": "discord"
-      },
-      {
-        "anchor": "Status",
-        "href": "https://status.tavus.io",
-        "icon": "tower-broadcast"
       }
-    ]
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Community",
+          "href": "https://discord.gg/5Y9Er6WNN5",
+          "icon": "discord"
+        },
+        {
+          "anchor": "Status",
+          "href": "https://status.tavus.io",
+          "icon": "tower-broadcast"
+        }
+      ]
+    }
   },
   "logo": {
     "light": "/logo/light.png",

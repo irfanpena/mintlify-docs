@@ -1,0 +1,45 @@
+---
+title: Overview
+description: Learn what a conversation is in Tavus
+---
+
+A conversation is a video call session with a replica.
+
+When a conversation is created, Tavus provides a meeting URL with a Daily prebuilt video interface. The replica automatically joins the call and begins interacting.
+
+## Conversation Customizations
+Tavus provides several customizations that you can set per conversation:
+### Identity and Context Setup
+- **Persona**: You can use a stock persona provided by Tavus or create a custom one. If no replica is specified, the default replica linked to the persona will be used (if available).
+- **Replica**: Use a stock replica provided by Tavus or create a custom one. If a replica is provided without a persona, the default Tavus persona will be used.
+- **Conversation Context**: Customize the conversation context to set the scene, explain the user’s role, say who joins the call, or point out key topics. It builds on the base persona and helps the AI give better, more focused answers.
+- **Custom Greeting**: You can personalize the opening line that the AI should use when the conversation starts.
+### Advanced Settings and Features
+- **Call Time Settings**: Set call durations and timeouts to control usage, avoid extra costs, and ensure users stay within their allotted time and concurrency limits.
+- **Language**: Set the supported language your conversation speaks in. If you're using a custom TTS voice, make sure it supports the selected language.
+- **Background Customization**: Set the AI agent’s background to a green screen or use WebGL on the frontend to make it transparent or replace it with a custom background.
+   - You can use WebGL on the frontend to make the green screen transparent or change its color. Try it out with our [CVI Green Screen Sample App](https://andy-tavus.github.io/CVI-greenscreen-webGL/).
+- **Subtitles**: Enable subtitles for your conversation.
+- **Call Recording**: Enable the recording feature and set up your own S3 bucket to store the conversation recording.
+
+## Getting Started
+You can easily create a conversation by using the [Tavus Dashboard](https://platform.tavus.io/) or following the steps in the [Conversation API Quickstart](https://docs.google.com/document/d/1C4y9QTaM8SeWcgOV-xsUdRllQVqibsI8GERfO0UxD_o/edit?usp=sharing) guide.
+## Conversational Use Cases
+We offer a collection of conversation use cases demonstrating various use cases for your reference.
+
+<CardGroup cols={2}>
+  <Card title="Tavus Researcher" img="/images/charlie.png" href="#">
+    A friendly AI human who is also a researcher at Tavus.
+  </Card>
+  <Card title="AI Interviewer" img="/images/aii.png" href="#">
+    Screen candidates at scale with an engaging experience.
+  </Card>
+  <Card title="History Teacher" img="/images/ht.png" href="#">
+    Offer personalized, 24/7 lessons tailored to your learning style.
+  </Card>
+  <Card title="Sales Coach" img="/images/sc.png" href="#">
+    Offer scalable 1:1 coaching that's engaging and empathetic.
+  </Card>
+</CardGroup>
+
+

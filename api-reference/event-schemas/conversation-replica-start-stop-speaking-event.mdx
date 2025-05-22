@@ -1,0 +1,16 @@
+---
+title: Replica.started_speaking/stopped_speaking 
+openapi-schema: replica
+description: |
+    This is an event broadcasted by Tavus.
+
+    A `replica.started_speaking/stopped_speaking event` is broadcasted by Tavus at specific times: the replica.started_speaking is
+    sent when the replica begins speaking, and a separate event for the replica.stopped_speaking is also sent as the
+    replica stop speaking. 
+
+    Replica.started/stopped_speaking events can be used to keep track of when the replica has started or stopped
+    speaking.
+
+    The inference_id can be used to correlate other events with these replica.[started|stopped]_speaking events, so you
+    can know what and when the replica said something.
+---

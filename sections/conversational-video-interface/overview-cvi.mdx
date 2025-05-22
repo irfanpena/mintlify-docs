@@ -1,0 +1,81 @@
+---
+title: CVI Overview
+sidebarTitle: Overview
+description: Learn what CVI is and its features.
+---
+
+
+Conversational Video Interface (CVI) is a framework for creating real-time video interactions with AI. It enables AI agents to see, hear, and respond naturally, mirroring human conversation.
+
+CVI consists of three core components:
+- **Persona**: Defines the AI agent’s behavior, tone, knowledge, and capabilities. Shaping how it responds during a conversation.
+- **Replica**: Renders the AI agent’s visual appearance, with facial animations synced to speech for a lifelike presence using the Phoenix-3 model.
+- **Conversation**: A real-time video call session where users interact with the AI agent powered by the configured persona and replica.
+
+<Frame>
+<video
+  controls
+  className="w-full aspect-video"
+  src="https://tavus-sample-vids.s3.us-west-1.amazonaws.com/conversation.mov"
+></video>
+</Frame>
+
+## Key Features
+
+- **API-First Design**: Quickly build and test AI video conversations using our easy-to-integrate API.
+- **Modular Pipeline**: Works with your existing LLMs, RAG, and TTS, giving you full control over identity, responses, and knowledge.
+- **Easy Deployment and Scaling**: Run AI conversations at any scale. No need to worry about GPUs, traffic limits, or complex backend setup.
+- **World’s Lowest Latency**: Achieve ~600ms utterance-to-utterance latency response time for fast, natural conversations with accurate turn-taking.
+- **Multilingual Support**: CVI supports over 30 languages.
+- **Lifelike AI Replicas**: Choose from 100+ lifelike stock replicas or create custom digital twins that look and sound human.
+
+## Layers
+CVI has a modular design made of different layers, which you can customize to fit your needs:
+- **Transport (WebRTC)**: Handles video conferencing with built-in UI (using Daily by default). Customizable.
+- **Perception**: Analyzes user’s facial and physical cues using the Raven model.
+- **STT**: Manages conversation flow, interruptions, and pauses using the Hummingbird model.
+- **LLM**: Responds to user input using Tavus or custom third-party models.
+- **TTS**: Converts LLM response to speech.
+- **STS**: Directly converts input speech to output speech, bypassing LLM and TTS.
+
+## Customization Options
+CVI offers extensive customization to tailor the AI experience:
+- Bring your own LLM or enable function calling with Tavus-optimized models.
+- Custom text-to-speech and automatic speech recognition components.
+- Configure smart turn detection and adjust sensitivity for interruptions and pauses.
+- Access video streams directly and build your own custom UI.
+
+<Note>
+Note: For more details regarding the CVI Layers, see the Layer Configurations article.
+</Note>
+
+## Getting Started
+
+To get started with CVI:
+
+<CardGroup cols={2}>
+    <Card title="Create a Conversation" icon="comments">
+    Initiate a video call with a replica.
+    </Card>
+
+    <Card title="Create a Persona" icon="user-gear">
+    Create your own customized persona.
+    </Card>
+
+    <Card title="Create a Replica" icon="clone">
+    Create a personalized replica.
+    </Card>
+
+    <Card title="Custom LLM" icon="microchip">
+    Integrate your custom LLM.
+    </Card>
+
+    <Card title="Embed CVI into Your Site" icon="code">
+    Add CVI directly to your website.
+    </Card>
+
+    <Card title="Third-Party Integrations" icon="puzzle-piece">
+    Connect with other platforms.
+    </Card>
+</CardGroup>
+

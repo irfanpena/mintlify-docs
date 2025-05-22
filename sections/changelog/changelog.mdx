@@ -1,0 +1,155 @@
+---
+title: Changelog
+---
+<Update label="May 17" tags={["2025"]}>
+<Tabs>
+<Tab title="CVI">
+## New Features
+No features were added in this release.
+
+## Enhancements
+- **Major Phoenix 3 Enhancements for CVI**:
+  - Increased frame rate from 27fps to 32fps, significantly boosting smoothness.
+  - Reduced Phoenix step's cold boot time by 60% (from 5s to 2s). Warm boot is now consistently under 3 seconds.
+  - Lipsync accuracy improved by ~22% based on AVSR metric.
+  - Resolved blurriness and choppiness at conversation start.
+  - Enhanced listening mode with more natural micro expressions (eyebrow movements, subtle gestures).
+  - Greenscreen mode speed boosted by an additional ~1.5fps.
+- **Enhanced CVI Audio Quality**: Audio clicks significantly attenuated, providing clearer conversational audio.
+- **Phoenix 3 Visual Artifacts Fix**: Resolved visual artifacts in 4K videos on Apple devices, eliminating black spot artifacts in thumbnails.
+
+
+</Tab>
+<Tab title="Video Generation">
+
+## New Features
+No features were added in this release.
+
+## Enhancements
+- **Faster Phoenix 3 Video Gen**: Substantially lowered generation times
+  - 4K videos: reduced from ~22 mins to ~10 mins per minute generated.
+  - 1080p videos: down from ~8 mins to ~3.25 mins per minute generated.
+
+
+</Tab>
+<Tab title="Lipsync">
+
+## New Features
+No features were added in this release.
+
+## Enhancements
+No enhancements were made in this release.
+
+
+</Tab>
+</Tabs>
+</Update>
+
+<Update label="May 9" tags={["2025"]}>
+<Tabs>
+<Tab title="CVI">
+
+## New Features
+- Launched [LiveKit Integration](https://www.tavus.io/post/building-real-time-ai-video-agents-with-livekit-and-tavus): With Tavus video agents now integrated into LiveKit, you can add humanlike video responses to your voice agents in seconds.
+- [Persona API](https://docs.tavus.io/api-reference/personas/patch-persona): Enabled patch updates to personas.
+## Enhancements
+- Resolved TTS (Cartesia) stability issues and addressed hallucination.
+- **Phoenix 3 Improvements**:
+  - Fixed blinking/jumping issues and black spots in videos.
+  - FPS optimization to resolve static and audio crackling.
+
+
+</Tab>
+<Tab title="Video Generation">
+
+## New Features
+No features were added in this release.
+
+## Enhancements
+- **Wave Feature Enhancements**: Rolling out fixes for replicas previously missing [wave/no-wave functionality](https://docs.tavus.io/api-reference/video-request/create-video#body-properties-start-with-wave).
+
+</Tab>
+<Tab title="Lipsync">
+
+## New Features
+No features were added in this release.
+
+## Enhancements
+No enhancements were made in this release.
+
+
+</Tab>
+</Tabs>
+</Update>
+
+<Update label="May" tags={["2024"]}>
+<Tabs>
+<Tab title="CVI">
+
+## New Features
+No features were added in this release.
+
+## Enhancements
+No enhancements were made in this release.
+
+
+</Tab>
+<Tab title="Video Generation">
+
+## New Features
+* Added the `audio_url` parameter in the [`/videos`](https://docs.tavus.io/api-reference/video-request/create-video#generate-from-audio-file) endpoint to generate videos using any custom audio source.
+
+## Enhancements
+No enhancements were made in this release.
+
+
+</Tab>
+<Tab title="Lipsync">
+
+## New Features
+No features were added in this release.
+
+## Enhancements
+No enhancements were made in this release.
+
+
+</Tab>
+</Tabs>
+</Update>
+
+<Update label="April" tags={["2024"]}>
+<Tabs>
+<Tab title="CVI">
+
+## New Features
+No features were added in this release.
+
+## Enhancements
+* **Replica API**:
+    * Enhanced Error Messaging for Training Videos.
+    * Optimized Auto QA for Training Videos.
+
+
+</Tab>
+<Tab title="Video Generation">
+
+## New Features
+No features were added in this release.
+
+## Enhancements
+No enhancements were made in this release.
+
+
+</Tab>
+<Tab title="Lipsync">
+
+## New Features
+No features were added in this release.
+
+## Enhancements
+No enhancements were made in this release.
+
+
+</Tab>
+</Tabs>
+</Update>
