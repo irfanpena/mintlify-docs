@@ -1,0 +1,201 @@
+---
+title: Overview
+description: Interact with the replica during live conversations.
+---
+
+The Interactions Protocol lets you control and customize live conversations with a Replica in real time. You can send interaction events to the Conversational Video Interface (CVI) and listen to events the Replica sends back during the call.
+
+### Interaction Types
+- Echo interactions
+- Response interactions
+- Interrupt interactions
+- Override conversation context interactions
+- Sensitivity interactions
+
+### Observable Events
+- Utterance Events
+- Tool Call Events
+- Perception Tool Call Events
+- Perception Analysis Events
+- Replica Started/Stopped Speaking
+- User Started/Stopped Speaking
+- Replica Interrupted
+
+## Call Client Example
+The interactions protocol uses a WebRTC data channel for communication. In Tavus's case, this is powered by [Daily](https://www.daily.co/), which makes setting up the call client quick and simple.
+<Tabs>
+<Tab title="Daily JS">
+Here’s an example of using [DailyJS](https://docs.daily.co/reference/daily-js/daily-call-client) to create a call client in JavaScript:
+<Note>
+The Daily `app-message` event is used to send and receive events and interactions between your server and CVI.
+</Note>
+```js
+<html>
+  <script crossorigin src="https://unpkg.com/@daily-co/daily-js"></script>
+  <body>
+    <!-- Add input field and send button -->
+    <input type="text" id="messageInput" placeholder="Enter your message">
+    <button onclick="sendAppMessage()">Send Message</button>
+
+    <script>
+      call = window.Daily.createFrame();
+      call.on('app-message', (event) => {
+        console.log('app-message', event);
+      });
+      
+      call.join({ url: 'YOUR_CONVERSATION_URL' });
+
+      function sendAppMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value;
+        if (message) {
+          const interaction = {
+            "message_type": "conversation",
+            "event_type": "conversation.echo",
+            "conversation_id": "YOUR_CONVERSATION_ID",
+            "properties": {
+              "text": `${message}`
+            }
+          }
+          const hi = call.sendAppMessage(interaction, '*');
+          console.log('Sending message: ', hi);
+          console.log('Sent message: ', interaction);
+          messageInput.value = '';
+        }
+      }
+    </script>
+  </body>
+</html>
+```
+</Tab>
+<Tab title="Daily Python">
+Here’s an example of using [Daily Python](https://docs.daily.co/reference/daily-python) to create a call client in Python:
+<Note>
+The Daily `app-message` event is used to send and receive events and interactions between your server and CVI.
+</Note>
+```py
+call_client = None
+
+class RoomHandler(EventHandler):
+    def __init__(self):
+        super().__init__()
+    
+    def on_app_message(self, message, sender: str) -> None:
+        print(f"Incoming app message from {sender}: {message}")
+
+def join_room(url):
+    global call_client
+    try:
+        Daily.init()
+        output_handler = RoomHandler()
+        call_client = CallClient(event_handler=output_handler)
+        call_client.join(url)
+    except Exception as e:
+        print(f"Error joining room: {e}")
+        raise
+
+def send_message(message):
+    global call_client
+    call_client.send_app_message(message)
+```
+</Tab>
+<Tab title="Daily React">
+Here’s an example of using [Daily React](https://docs.daily.co/reference/daily-react) to create a call client in React:
+<Note>
+The Daily `app-message` event is used to send and receive events and interactions between your server and CVI.
+</Note>
+```tsx
+"use client"
+
+import React, { useEffect, useRef, useState } from 'react';
+
+
+const TavusConversation = () => {
+  const [message, setMessage] = useState('');
+  const callRef = useRef(null);
+  const containerRef = useRef(null);
+
+
+  useEffect(() => {
+    const loadDaily = async () => {
+      const DailyIframe = (await import('@daily-co/daily-js')).default;
+
+
+      callRef.current = DailyIframe.createFrame({
+        iframeStyle: {
+          width: '100%',
+          height: '500px',
+          border: '0',
+        }
+      });
+
+
+      if (containerRef.current) {
+        containerRef.current.appendChild(callRef.current.iframe());
+      }
+
+
+      callRef.current.on('app-message', (event) => {
+        console.log('app-message received:', event);
+      });
+
+
+      callRef.current.join({
+        url: 'YOUR_CONVERSATION_URL',
+      });
+    };
+
+
+    loadDaily();
+
+
+    return () => {
+      if (callRef.current) {
+        callRef.current.leave();
+        callRef.current.destroy();
+      }
+    };
+  }, []);
+
+
+  const sendAppMessage = () => {
+    if (!message || !callRef.current) return;
+
+
+    const interaction = {
+      message_type: 'conversation',
+      event_type: 'conversation.echo',
+      conversation_id: 'YOUR_CONVERSATION_ID',
+      properties: { text: message }
+    };
+
+
+    callRef.current.sendAppMessage(interaction, '*');
+    setMessage('');
+  };
+
+
+  return (
+    <div className="w-full h-full flex flex-col items-center">
+      <div ref={containerRef} className="w-full mb-4" />
+      <div>
+        <input
+          type="text"
+          className="border p-2 mr-2"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type a message"
+        />
+        <button onClick={sendAppMessage} className="bg-blue-500 text-white px-4 py-2 rounded">
+          Send Message
+        </button>
+      </div>
+    </div>
+  );
+};
+
+
+export default TavusConversation;
+```
+</Tab>
+</Tabs>

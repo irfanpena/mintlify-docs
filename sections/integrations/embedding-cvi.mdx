@@ -1,0 +1,177 @@
+---
+title: Embedding Tavus CVI in Your Website
+description: Learn how to embed Tavus's Conversational Video Interface (CVI) into your site or app.
+---
+
+## Overview
+
+Tavus CVI delivers AI-powered video conversations directly in your application. You can integrate it using:
+
+| Method                | Best For                           | Complexity | Customization |
+| --------------------- | ---------------------------------- | ---------- | ------------- |
+| **iframe**            | Static websites, quick demos       | Low        | Low           |
+| **Vanilla JS**        | Basic dynamic behavior             | Low        | Medium        |
+| **Node.js + Express** | Backend apps, dynamic embedding    | Medium     | High          |
+| **Daily SDK**         | Full UI control, advanced features | High       | Very High     |
+
+## Implementation Steps
+<Tabs>
+<Tab title="iframe ">
+This is the simplest approach requiring no coding. It leverages Tavus’s prebuilt interface with limited customization options.
+1. Create a conversation using the Tavus API.
+2. Replace `YOUR_TAVUS_MEETING_URL` below with your actual conversation URL:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head><title>Tavus CVI</title></head>
+  <body>
+    <iframe
+      src="YOUR_TAVUS_MEETING_URL"
+      allow="camera; microphone; fullscreen; display-capture"
+      style="width: 100%; height: 500px; border: none;">
+    </iframe>
+  </body>
+</html>
+```
+</Tab>
+<Tab title="Vanilla JavaScript">
+This method provides basic customizations and dynamic room management for apps without framework.
+1. Add the following script tag to your HTML `<head>`:
+
+```html
+<head>
+  <script src="https://unpkg.com/@daily-co/daily-js"></script>
+</head>
+```
+
+2. Use the following script, replacing `'YOUR_TAVUS_MEETING_URL'` with your actual conversation URL:
+
+```html
+<body>
+  <div id="video-call-container"></div>
+  <script>
+    const callFrame = window.Daily.createFrame({
+      iframeStyle: { width: '100%', height: '500px' },
+    });
+    callFrame.join({ url: 'YOUR_TAVUS_MEETING_URL' });
+    document.getElementById('video-call-container').appendChild(callFrame.iframe());
+  </script>
+</body>
+```
+</Tab>
+<Tab title="Node.js + Express">
+This method serves dynamic pages that embed Tavus CVI within Daily rooms.
+1. Install Express:
+
+```bash
+npm install express
+```
+
+2. Create `server.js` and implement the following Express server:
+
+```js
+const express = require('express');
+const app = express();
+const PORT = 3000;
+
+app.get('/room', (req, res) => {
+  const meetingUrl = req.query.url || 'YOUR_TAVUS_MEETING_URL';
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+      <head><script src="https://unpkg.com/@daily-co/daily-js"></script></head>
+      <body>
+        <div id="video-call-container"></div>
+        <script>
+          const callFrame = window.Daily.createFrame({
+            iframeStyle: { width: '100%', height: '500px' },
+          });
+          callFrame.join({ url: '${meetingUrl}' });
+          document.getElementById('video-call-container').appendChild(callFrame.iframe());
+        </script>
+      </body>
+    </html>
+  `);
+});
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+```
+
+3. Run the server:
+
+```bash
+node server.js
+```
+
+4. Visit: `http://localhost:3000/room?url=YOUR_TAVUS_MEETING_URL`
+<Note>
+### Notes
+* Supports dynamic URLs.
+* Can be extended with authentication and other logic using Tavus's API.
+</Note>
+</Tab>
+<Tab title="Daily JS SDK">
+This method offers complete control over the user experience and allows you to build a fully custom interface for Tavus CVI.
+1. Install SDK:
+
+```bash
+npm install @daily-co/daily-js
+```
+
+2. Use the following script to join the Tavus CVI meeting:
+    <Note>
+    - You can use event listeners to build interactivity into your custom UI (e.g., participant tracking, screen sharing, etc.).
+    </Note>
+
+```js
+import Daily from '@daily-co/daily-js';
+
+const callFrame = Daily.createCallObject();
+
+callFrame.on('joined-meeting', () => console.log('Joined!'));
+callFrame.on('participant-joined', (e) => {
+  console.log(`Participant: ${e.participant.user_name}`);
+});
+
+callFrame.join({ url: 'YOUR_TAVUS_MEETING_URL' });
+```
+
+3. Design a custom video call interface using the media streams provided by the [Daily.js SDK](https://docs.daily.co/guides/customizing-in-call-ui).
+</Tab>
+</Tabs>
+
+## FAQs
+<AccordionGroup>
+
+  <Accordion title="How can I reduce background noise during calls?" defaultOpen="true">
+    Daily provides built-in noise cancellation which can be enabled via their `updateInputSettings()` method.
+
+    ```js
+    callFrame.updateInputSettings({
+      audio: {
+        processor: {
+          type: 'noise-cancellation',
+        },
+      },
+    });
+    ```
+
+    More info: [Daily Noise Cancellation Setup](https://docs.daily.co/reference/daily-js/instance-methods/update-input-settings#audio-processor)
+  </Accordion>
+
+  <Accordion title="How can I make the video UI match my site design?" defaultOpen="true">
+    Use the [Daily JS](https://docs.daily.co/reference/daily-js) for full control over layout, colors, and components.
+  </Accordion>
+
+  <Accordion title="Can I add event listeners to the call client?" defaultOpen="true">
+  Yes, you can attach [Daily event listeners](https://docs.daily.co/reference/daily-js/events) to monitor and respond to events like participants joining, leaving, or starting screen share.  
+
+  Tavus also exposes its own [CVI events](/sections/conversational-video-interface/interactions-protocols/overview#daily-react).
+  </Accordion>
+
+  <Accordion title="Can I record video calls?" defaultOpen="true">
+    Yes. Tavus support video calls recording. Please see the implementation [here](/sections/conversational-video-interface/conversation/customizations/recording).
+  </Accordion>
+
+</AccordionGroup>
