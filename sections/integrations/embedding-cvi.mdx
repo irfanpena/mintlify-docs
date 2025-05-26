@@ -139,9 +139,6 @@ npm install @daily-co/daily-js
 ```
 
 2. Use the following script to join the Tavus CVI meeting:
-<Note>
-You can use event listeners to build interactivity into your custom UI (e.g., participant tracking, screen sharing, etc.).
-</Note>
 
 ```js [expandable]
 import React, { useEffect, useRef, useState } from 'react';
@@ -269,18 +266,9 @@ export default App;
     ```
   </Accordion>
 
-  <Accordion title="How can I make the video UI match my site design?" defaultOpen="true">
-    Use the [Daily JS](https://docs.daily.co/reference/daily-js) for full control over layout, colors, and components.
-  </Accordion>
-
   <Accordion title="Can I add event listeners to the call client?" defaultOpen="true">
   Yes, you can attach [Daily event listeners](https://docs.daily.co/reference/daily-js/events) to monitor and respond to events like participants joining, leaving, or starting screen share.  
-
-  Tavus also exposes its own [CVI events](/sections/conversational-video-interface/interactions-protocols/overview#daily-react).
   </Accordion>
 
-  <Accordion title="Can I record video calls?" defaultOpen="true">
-    Yes. Tavus supports video calls recording. Please see the implementation [here](/sections/conversational-video-interface/conversation/customizations/recording).
-  </Accordion>
 
 </AccordionGroup>
