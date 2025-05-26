@@ -120,9 +120,9 @@ npm install @daily-co/daily-js
 ```
 
 2. Use the following script to join the Tavus CVI meeting:
-    <Note>
-    - You can use event listeners to build interactivity into your custom UI (e.g., participant tracking, screen sharing, etc.).
-    </Note>
+<Note>
+You can use event listeners to build interactivity into your custom UI (e.g., participant tracking, screen sharing, etc.).
+</Note>
 
 ```js
 import Daily from '@daily-co/daily-js';
@@ -137,7 +137,7 @@ callFrame.on('participant-joined', (e) => {
 callFrame.join({ url: 'YOUR_TAVUS_MEETING_URL' });
 ```
 
-3. Design a custom video call interface using the media streams provided by the [Daily.js SDK](https://docs.daily.co/guides/customizing-in-call-ui).
+3. Design a custom video call interface (Optional). You can build your own UI using Daily's media tracks and call state. See the [Daily JS SDK](https://docs.daily.co/guides/customizing-in-call-ui) for details.
 </Tab>
 </Tabs>
 
@@ -145,7 +145,7 @@ callFrame.join({ url: 'YOUR_TAVUS_MEETING_URL' });
 <AccordionGroup>
 
   <Accordion title="How can I reduce background noise during calls?" defaultOpen="true">
-    Daily provides built-in noise cancellation which can be enabled via their `updateInputSettings()` method.
+    Daily provides built-in noise cancellation which can be enabled via their [updateInputSettings()](https://docs.daily.co/reference/daily-js/instance-methods/update-input-settings#audio-processor) method.
 
     ```js
     callFrame.updateInputSettings({
@@ -156,8 +156,6 @@ callFrame.join({ url: 'YOUR_TAVUS_MEETING_URL' });
       },
     });
     ```
-
-    More info: [Daily Noise Cancellation Setup](https://docs.daily.co/reference/daily-js/instance-methods/update-input-settings#audio-processor)
   </Accordion>
 
   <Accordion title="How can I make the video UI match my site design?" defaultOpen="true">
@@ -171,7 +169,7 @@ callFrame.join({ url: 'YOUR_TAVUS_MEETING_URL' });
   </Accordion>
 
   <Accordion title="Can I record video calls?" defaultOpen="true">
-    Yes. Tavus support video calls recording. Please see the implementation [here](/sections/conversational-video-interface/conversation/customizations/recording).
+    Yes. Tavus supports video calls recording. Please see the implementation [here](/sections/conversational-video-interface/conversation/customizations/recording).
   </Accordion>
 
 </AccordionGroup>
