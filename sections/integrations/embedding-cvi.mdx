@@ -51,13 +51,22 @@ This method provides basic customizations and dynamic room management for apps w
 <body>
   <div id="video-call-container"></div>
   <script>
+    // Create a Daily iframe with custom settings
     const callFrame = window.Daily.createFrame({
-      iframeStyle: { width: '100%', height: '500px' },
+      iframeStyle: {
+        width: '100%',
+        height: '500px',
+      },
     });
+
+    // Join the Tavus CVI meeting
     callFrame.join({ url: 'YOUR_TAVUS_MEETING_URL' });
+
+    // Append the iframe to the container
     document.getElementById('video-call-container').appendChild(callFrame.iframe());
   </script>
 </body>
+
 ```
 </Tab>
 <Tab title="Node.js + Express">
@@ -80,14 +89,24 @@ app.get('/room', (req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html>
-      <head><script src="https://unpkg.com/@daily-co/daily-js"></script></head>
+      <head>
+        <script src="https://unpkg.com/@daily-co/daily-js"></script>
+      </head>
       <body>
         <div id="video-call-container"></div>
         <script>
+          // Create the Daily iframe for the Tavus CVI room
           const callFrame = window.Daily.createFrame({
-            iframeStyle: { width: '100%', height: '500px' },
+            iframeStyle: {
+              width: '100%',
+              height: '500px',
+            },
           });
+
+          // Join the room
           callFrame.join({ url: '${meetingUrl}' });
+
+          // Append the iframe to the container
           document.getElementById('video-call-container').appendChild(callFrame.iframe());
         </script>
       </body>
@@ -124,20 +143,112 @@ npm install @daily-co/daily-js
 You can use event listeners to build interactivity into your custom UI (e.g., participant tracking, screen sharing, etc.).
 </Note>
 
-```js
-import Daily from '@daily-co/daily-js';
+```js [expandable]
+import React, { useEffect, useRef, useState } from 'react';
+import DailyIframe from '@daily-co/daily-js';
 
-const callFrame = Daily.createCallObject();
 
-callFrame.on('joined-meeting', () => console.log('Joined!'));
-callFrame.on('participant-joined', (e) => {
-  console.log(`Participant: ${e.participant.user_name}`);
-});
+const getOrCreateCallObject = () => {
+  // Use a property on window to store the singleton
+  if (!window._dailyCallObject) {
+    window._dailyCallObject = DailyIframe.createCallObject();
+  }
+  return window._dailyCallObject;
+};
 
-callFrame.join({ url: 'YOUR_TAVUS_MEETING_URL' });
+
+const App = () => {
+  const callRef = useRef(null);
+  const [remoteParticipants, setRemoteParticipants] = useState({});
+
+
+  useEffect(() => {
+    // Only create or get one call object per page
+    const call = getOrCreateCallObject();
+    callRef.current = call;
+
+
+    // Join meeting
+    call.join({ url: "YOUR_TAVUS_MEETING_URL" });
+
+
+    // Handle remote participants
+    const updateRemoteParticipants = () => {
+      const participants = call.participants();
+      const remotes = {};
+      Object.entries(participants).forEach(([id, p]) => {
+        if (id !== 'local') remotes[id] = p;
+      });
+      setRemoteParticipants(remotes);
+    };
+
+
+    call.on('participant-joined', updateRemoteParticipants);
+    call.on('participant-updated', updateRemoteParticipants);
+    call.on('participant-left', updateRemoteParticipants);
+
+
+    // Cleanup
+    return () => {
+      call.leave();
+    };
+  }, []);
+
+
+  // Attach remote video and audio tracks
+  useEffect(() => {
+    Object.entries(remoteParticipants).forEach(([id, p]) => {
+      // Video
+      const videoEl = document.getElementById(`remote-video-${id}`);
+      if (videoEl && p.tracks.video && p.tracks.video.state === 'playable' && p.tracks.video.persistentTrack
+      ) {
+        videoEl.srcObject = new MediaStream([p.tracks.video.persistentTrack]);
+      }
+      // Audio
+      const audioEl = document.getElementById(`remote-audio-${id}`);
+      if (
+        audioEl && p.tracks.audio && p.tracks.audio.state === 'playable' && p.tracks.audio.persistentTrack
+      ) {
+        audioEl.srcObject = new MediaStream([p.tracks.audio.persistentTrack]);
+      }
+    });
+  }, [remoteParticipants]);
+
+
+  // Custom UI
+  return (
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+      <header className="bg-gray-800 p-4 flex justify-between items-center">
+        <span className="font-semibold">Meeting Room (daily-js custom UI)</span>
+      </header>
+      <main className="flex-1 p-4 grid grid-cols-2 md:grid-cols-4 gap-2">
+      {Object.entries(remoteParticipants).map(([id, p]) => (
+        <div
+          key={id}
+          className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video w-48"
+        >
+          <video
+            id={`remote-video-${id}`}
+            autoPlay
+            playsInline
+            className="w-1/3 h-1/3 object-contain mx-auto"
+          />
+          <audio id={`remote-audio-${id}`} autoPlay playsInline />
+          <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-sm">
+            {p.user_name || id.slice(-4)}
+          </div>
+        </div>
+      ))}
+    </main>
+    </div>
+  );
+};
+
+
+export default App;
 ```
 
-3. Design a custom video call interface (Optional). You can build your own UI using Daily's media tracks and call state. See the [Daily JS SDK](https://docs.daily.co/guides/customizing-in-call-ui) for details.
+3. Customize the conversation UI in the script above (Optional). See the [Daily JS SDK](https://docs.daily.co/guides/customizing-in-call-ui) for details.
 </Tab>
 </Tabs>
 
