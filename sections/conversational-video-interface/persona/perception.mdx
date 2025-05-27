@@ -11,7 +11,7 @@ The **Perception Layer** in Tavus enhances AI personas with real-time visual und
 
 - **Ambient Perception**: Constant low-level visual scanning that helps Raven understand user identity, emotions, and environment.
   - Includes default queries like user appearance and emotional state.
-  - Supports custom passive queries with [`ambient_awareness_queries`](#2-add-ambient-awareness-queries).
+  - Supports custom passive queries with [`ambient_awareness_queries`](#2-ambient-awareness-queries).
 - **Active Perception**: On-demand visual analysis triggered by specific needs.
   - Uses speculative execution to minimize latency.
 
@@ -19,7 +19,7 @@ The **Perception Layer** in Tavus enhances AI personas with real-time visual und
 
 ## Configuring the Perception Layer
 
-### 1. Select the `perception_model`
+### 1. `perception_model`
 
 Tavus supports two models: `basic` (a legacy model) and `raven-0` (the default and recommended choice). Use `raven-0` for advanced visual capabilities, including screen share support, ambient queries, and perception tools.
 
@@ -35,7 +35,7 @@ Tavus supports two models: `basic` (a legacy model) and `raven-0` (the default a
 }
 ```
 
-### 2. Add `ambient_awareness_queries`
+### 2. `ambient_awareness_queries`
 Use this field to define the custom queries `raven-0` should always monitor for.
 <Tip>
 Best practices for custom queries:
@@ -49,7 +49,7 @@ Best practices for custom queries:
 ]
 ```
 
-### 3. Define the `perception_tool_prompt`
+### 3. `perception_tool_prompt`
 
 Tell `raven-0` when and how to trigger tools based on what it sees.
 ```json
@@ -57,7 +57,7 @@ Tell `raven-0` when and how to trigger tools based on what it sees.
   "You have a tool to notify the system when a bright outfit is detected, named `notify_if_bright_outfit_shown`. You MUST use this tool when a bright outfit is detected."
 ```
 
-### 4. Register `perception_tools`
+### 4. `perception_tools`
 
 These callable functions can be triggered by `raven-0` when specific visual conditions are met.
 ```json
