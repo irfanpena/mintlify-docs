@@ -44,6 +44,17 @@
                 ]
               },
               {
+                "group": "Persona",
+                "pages": [
+                  {
+                    "group": "Layer Configurations",
+                    "pages": [
+                      "sections/conversational-video-interface/persona/perception"
+                    ]
+                  }
+                ]
+              },
+              {
                 "group": "Interactions Protocol",
                 "pages": [
                   "sections/conversational-video-interface/interactions-protocols/overview"
