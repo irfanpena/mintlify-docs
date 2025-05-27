@@ -22,9 +22,9 @@ The **Perception Layer** in Tavus enhances AI personas with real-time visual und
 ### 1. `perception_model`
 
 Tavus supports two models: `basic` (a legacy model) and `raven-0` (the default and recommended choice). Use `raven-0` for advanced visual capabilities, including screen share support, ambient queries, and perception tools.
-
+`off` to disable the perception layer.
 <Note>
-**Screen Share Feature**: When using `raven-0`, screen share feature is enabled by default without additional configuration.
+**Screen Share Feature**:When using `raven-0`, screen share feature is enabled by default without additional configuration.
 </Note>
 
 ```json
@@ -36,7 +36,7 @@ Tavus supports two models: `basic` (a legacy model) and `raven-0` (the default a
 ```
 
 ### 2. `ambient_awareness_queries`
-Use this field to define the custom queries `raven-0` should always monitor for.
+Use this field to define the custom queries `raven-0` should always monitor for in the visual stream.
 <Tip>
 Best practices for custom queries:
 - Use simple, focused prompts.
