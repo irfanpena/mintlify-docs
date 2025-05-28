@@ -49,7 +49,8 @@
                   {
                     "group": "Layer Configurations",
                     "pages": [
-                      "sections/conversational-video-interface/persona/perception"
+                      "sections/conversational-video-interface/persona/perception",
+                      "sections/conversational-video-interface/persona/tools-calling"
                     ]
                   }
                 ]

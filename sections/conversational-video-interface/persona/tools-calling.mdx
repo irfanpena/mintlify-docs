@@ -1,0 +1,192 @@
+---
+title: Tools Calling
+sidebarTitle: Tools Calling
+description: Learn how to configure the tools calling.
+---
+
+Tool calling allows AI agents to programmatically invoke functions during a conversation—enabling interaction with APIs or services in real-time.
+
+Our `tools` capability is compatible with OpenAI's [Function Calling](https://platform.openai.com/docs/guides/function-calling) and is essential for building intelligent conversational agents that can reason, retrieve, and take actions.
+
+## Example Configuration
+
+Here’s an example of tool calling in both the `llm` and `perception` layers:
+<Tip>
+**Best Practices:**  
+- Use clear, specific function names to reduce ambiguity.  
+- Add detailed `description` fields to improve selection accuracy.
+</Tip>
+<CodeGroup>
+```json LLM Layer
+"llm": {
+  "model": "tavus-llama",
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_current_time",
+        "description": "Fetch the current local time for a specified location",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The name of the city or region, e.g. New York, Tokyo"
+            }
+          },
+          "required": ["location"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "convert_time_zone",
+        "description": "Convert time from one time zone to another",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "time": {
+              "type": "string",
+              "description": "The original time in ISO 8601 or HH:MM format, e.g. 14:00 or 2025-05-28T14:00"
+            },
+            "from_zone": {
+              "type": "string",
+              "description": "The source time zone, e.g. PST, EST, UTC"
+            },
+            "to_zone": {
+              "type": "string",
+              "description": "The target time zone, e.g. CET, IST, JST"
+            }
+          },
+          "required": ["time", "from_zone", "to_zone"]
+        }
+      }
+    }
+  ]
+}
+```
+```json Perception Layer
+"perception": {
+  "perception_model": "raven-0",
+  "ambient_awareness_queries": [
+      "Is the user showing an ID card?",
+      "Is the user wearing a mask?"
+  ],
+  "perception_tool_prompt": "You have a tool to notify the system when an ID card is detected, named `notify_if_id_shown`.",
+  "perception_tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "notify_if_id_shown",
+        "description": "Use this function when a drivers license or passport is detected in the image with high confidence. After collecting the ID, internally use final_ask()",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id_type": {
+              "type": "string",
+              "description": "best guess on what type of ID it is",
+            },
+          },
+          "required": ["id_type"],
+        },
+      },
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "notify_if_bright_outfit_shown",
+        "description": "Use this function when a bright outfit is detected in the image with high confidence",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "outfit_color": {
+              "type": "string",
+              "description": "Best guess on what color of outfit it is"
+            }
+          },
+          "required": ["outfit_color"]
+        }
+      }
+    }
+  ]
+}
+```
+</CodeGroup>
+## Defining Tools
+
+### Top-Level Fields
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | string | ✅ | Must be `"function"` to enable tool calling. |
+| `function` | object | ✅ | Defines the function that can be called by the LLM. Contains metadata and a strict schema for arguments. |
+
+#### `function`
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | ✅ | A unique identifier for the function. Must be in `snake_case`. The model uses this to refer to the function when calling it. |
+| `description` | string | ✅ | A natural language explanation of what the function does. Helps the LLM decide when to call it. |
+| `parameters` | object | ✅ | A JSON Schema object that describes the expected structure of the function’s input arguments. |
+
+#### `function.parameters`
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | string | ✅ | Always `"object"`. Indicates the expected input is a structured object. |
+| `properties` | object | ✅ | Defines each expected parameter and its corresponding type, constraints, and description. |
+| `required` | array of strings | ✅ | Specifies which parameters are mandatory for the function to execute. Each function should be included in the required list, even if they might seem optional in your code. |
+
+##### `function.parameters.properties`
+
+Each key inside `properties` defines a single parameter the model must supply when calling the function.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `<parameter_name>` | object | ✅ | Each key is a named parameter (e.g., `location`). The value is a schema for that parameter. |
+
+Optional subfields for each parameter:
+
+| Subfield | Type | Required | Description |
+|----------|------|----------|-------------|
+| `type` | string | ✅ | Data type (e.g., `string`, `number`, `boolean`). |
+| `description` | string | ❌ | Explains what the parameter represents and how it should be used. |
+| `enum` | array | ❌ | Defines a strict list of allowed values for this parameter. Useful for categorical choices. |
+
+## Modify Existing Tools
+You can update tool definitions using the [Update Persona API](https://docs.tavus.io/api-reference/personas/patch-persona).
+```shell
+curl --request PATCH \
+  --url https://tavusapi.com/v2/personas/{persona_id} \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api-key>' \
+  --data '[
+    {
+      "op": "replace",
+      "path": "/layers/llm/tools",
+      "value": [
+        {
+          "type": "function",
+          "function": {
+            "name": "get_current_weather",
+            "description": "Get the current weather in a given location",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "location": {
+                  "type": "string",
+                  "description": "The city and state, e.g. San Francisco, CA"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": ["celsius", "fahrenheit"]
+                }
+              },
+              "required": ["location", "unit"]
+            }
+          }
+        }
+      ]
+    }
+  ]'
+```
