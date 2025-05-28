@@ -135,8 +135,10 @@ Here’s an example of tool calling in both the `llm` and `perception` layers:
 |-------|------|----------|-------------|
 | `type` | string | ✅ | Always `"object"`. Indicates the expected input is a structured object. |
 | `properties` | object | ✅ | Defines each expected parameter and its corresponding type, constraints, and description. |
-| `required` | array of strings | ✅ | Specifies which parameters are mandatory for the function to execute. Each function should be included in the required list, even if they might seem optional in your code. |
-
+| `required` | array of strings | ✅ | Specifies which parameters are mandatory for the function to execute. |
+<Note>
+Each parameter should be included in the required list, even if they might seem optional in your code.
+</Note>
 ##### `function.parameters.properties`
 
 Each key inside `properties` defines a single parameter the model must supply when calling the function.
