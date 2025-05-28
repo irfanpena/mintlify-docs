@@ -8,6 +8,48 @@ Tool calling allows AI agents to programmatically invoke functions during a conv
 
 Our `tools` capability is compatible with OpenAI's [Function Calling](https://platform.openai.com/docs/guides/function-calling) and is essential for building intelligent conversational agents that can reason, retrieve, and take actions.
 
+## Defining Tools
+
+### Top-Level Fields
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | string | ✅ | Must be `"function"` to enable tool calling. |
+| `function` | object | ✅ | Defines the function that can be called by the LLM. Contains metadata and a strict schema for arguments. |
+
+#### `function`
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | ✅ | A unique identifier for the function. Must be in `snake_case`. The model uses this to refer to the function when calling it. |
+| `description` | string | ✅ | A natural language explanation of what the function does. Helps the LLM decide when to call it. |
+| `parameters` | object | ✅ | A JSON Schema object that describes the expected structure of the function’s input arguments. |
+
+#### `function.parameters`
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | string | ✅ | Always `"object"`. Indicates the expected input is a structured object. |
+| `properties` | object | ✅ | Defines each expected parameter and its corresponding type, constraints, and description. |
+| `required` | array of strings | ✅ | Specifies which parameters are mandatory for the function to execute. |
+<Note>
+Each parameter should be included in the required list, even if they might seem optional in your code.
+</Note>
+##### `function.parameters.properties`
+
+Each key inside `properties` defines a single parameter the model must supply when calling the function.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `<parameter_name>` | object | ✅ | Each key is a named parameter (e.g., `location`). The value is a schema for that parameter. |
+
+Optional subfields for each parameter:
+
+| Subfield | Type | Required | Description |
+|----------|------|----------|-------------|
+| `type` | string | ✅ | Data type (e.g., `string`, `number`, `boolean`). |
+| `description` | string | ❌ | Explains what the parameter represents and how it should be used. |
+| `enum` | array | ❌ | Defines a strict list of allowed values for this parameter. Useful for categorical choices. |
+
 ## Example Configuration
 
 Here’s an example of tool calling in both the `llm` and `perception` layers:
@@ -113,47 +155,6 @@ Here’s an example of tool calling in both the `llm` and `perception` layers:
 }
 ```
 </CodeGroup>
-## Defining Tools
-
-### Top-Level Fields
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `type` | string | ✅ | Must be `"function"` to enable tool calling. |
-| `function` | object | ✅ | Defines the function that can be called by the LLM. Contains metadata and a strict schema for arguments. |
-
-#### `function`
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `name` | string | ✅ | A unique identifier for the function. Must be in `snake_case`. The model uses this to refer to the function when calling it. |
-| `description` | string | ✅ | A natural language explanation of what the function does. Helps the LLM decide when to call it. |
-| `parameters` | object | ✅ | A JSON Schema object that describes the expected structure of the function’s input arguments. |
-
-#### `function.parameters`
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `type` | string | ✅ | Always `"object"`. Indicates the expected input is a structured object. |
-| `properties` | object | ✅ | Defines each expected parameter and its corresponding type, constraints, and description. |
-| `required` | array of strings | ✅ | Specifies which parameters are mandatory for the function to execute. |
-<Note>
-Each parameter should be included in the required list, even if they might seem optional in your code.
-</Note>
-##### `function.parameters.properties`
-
-Each key inside `properties` defines a single parameter the model must supply when calling the function.
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `<parameter_name>` | object | ✅ | Each key is a named parameter (e.g., `location`). The value is a schema for that parameter. |
-
-Optional subfields for each parameter:
-
-| Subfield | Type | Required | Description |
-|----------|------|----------|-------------|
-| `type` | string | ✅ | Data type (e.g., `string`, `number`, `boolean`). |
-| `description` | string | ❌ | Explains what the parameter represents and how it should be used. |
-| `enum` | array | ❌ | Defines a strict list of allowed values for this parameter. Useful for categorical choices. |
 
 ## Modify Existing Tools
 You can update tool definitions using the [Update Persona API](https://docs.tavus.io/api-reference/personas/patch-persona).
