@@ -8,11 +8,13 @@ The **Perception Layer** in Tavus enhances AI agent with real-time visual unders
 By using [**Raven**](/sections/models#raven%3A-perception-model), the AI agent becomes more context-aware, responsive, and capable of triggering actions based on visual input.
 
 ## Configuring the Perception Layer
-
+To configure the Perception Layer, define the following parameters within the `layers.perception` object:
 ### 1. `perception_model`
-
-Tavus supports two models: `basic` (a legacy model) and `raven-0` (the default and recommended choice). Use `raven-0` for advanced visual capabilities, including screen share support, ambient queries, and perception tools.
-`off` to disable the perception layer.
+Specifies the perception model to use.
+- **Options**:
+  - `raven-0` (default and recommended): Advanced visual capabilities, including screen share support, ambient queries, and perception tools.
+  - `basic`: Legacy model with limited features.
+  - `off`: Disables the perception layer.
 <Note>
 **Screen Share Feature**:When using `raven-0`, screen share feature is enabled by default without additional configuration.
 </Note>
@@ -26,7 +28,7 @@ Tavus supports two models: `basic` (a legacy model) and `raven-0` (the default a
 ```
 
 ### 2. `ambient_awareness_queries`
-Use this field to define the custom queries `raven-0` should always monitor for in the visual stream.
+An array of custom queries that `raven-0` continuously monitors in the visual stream. These queries allow the AI to be contextually aware without explicit prompts.
 <Tip>
 Best practices for custom queries:
 - Use simple, focused prompts.
@@ -47,8 +49,8 @@ Tell `raven-0` when and how to trigger tools based on what it sees.
 ```
 
 ### 4. `perception_tools`
+Defines callable functions that `raven-0` can trigger upon detecting specific visual conditions. Each tool must include a `type` and a `function` object detailing its schema.
 
-These callable functions can be triggered by `raven-0` when specific visual conditions are met.
 ```json
 "perception_tools": [
   {
@@ -72,7 +74,7 @@ These callable functions can be triggered by `raven-0` when specific visual cond
 ```
 
 <Note>
-Perception tools require both a `type` and `properties` field.
+Please see [Tool/Function Calling](#) for more details.
 </Note>
 
 ### End-of-call Perception Analysis
@@ -82,61 +84,48 @@ Perception tools require both a `type` and `properties` field.
 - A [Perception Analysis](https://docs.tavus.io/sections/event-schemas/conversation-perception-analysis) event
 
 - A [conversation callback](https://docs.tavus.io/sections/conversational-video-interface/conversation-callbacks) (if specified)
-
+<Note>
+This feature is exclusive to personas with `raven-0` specified in the Perception Layer.
+</Note>
 ## Example Use Case
+This example demonstrates a persona designed to identify when a user wears a bright outfit and triggers an internal action accordingly.
 
-This persona identifies when a user wears a bright outfit and triggers an internal action.
-<Tip>
-**Recommendation:**
-
-Use the full **CVI end-to-end pipeline** for optimal performance and lowest latency.
-</Tip>
-```bash
-curl -X POST https://tavusapi.com/v2/personas \
-  -H "x-api-key: <YOUR_API_KEY>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "persona_name": "Fashion Advisor",
-    "system_prompt": "As a Fashion Advisor, you specialize in offering tailored fashion advice.",
-    "pipeline_mode": "full",
-    "context": "You're having a video conversation with a client about their outfit.",
-    "default_replica_id": "r79e1c033f",
-    "layers": {
-      "perception": {
-        "perception_model": "raven-0",
-        "ambient_awareness_queries": [
-          "Is the user wearing a bright outfit?"
-        ],
-        "perception_tool_prompt":
-          "You have a tool to notify the system when a bright outfit is detected, named `notify_if_bright_outfit_shown`. You MUST use this tool when a bright outfit is detected.",
-        "perception_tools": [
-          {
-            "type": "function",
-            "function": {
-              "name": "notify_if_bright_outfit_shown",
-              "description": "Use this function when a bright outfit is detected in the image with high confidence",
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "outfit_color": {
-                    "type": "string",
-                    "description": "Best guess on what color of outfit it is"
-                  }
-                },
-                "required": ["outfit_color"]
-              }
+```json
+{
+  "persona_name": "Fashion Advisor",
+  "system_prompt": "As a Fashion Advisor, you specialize in offering tailored fashion advice.",
+  "pipeline_mode": "full",
+  "context": "You're having a video conversation with a client about their outfit.",
+  "default_replica_id": "r79e1c033f",
+  "layers": {
+    "perception": {
+      "perception_model": "raven-0",
+      "ambient_awareness_queries": [
+        "Is the user wearing a bright outfit?"
+      ],
+      "perception_tool_prompt": "You have a tool to notify the system when a bright outfit is detected, named `notify_if_bright_outfit_shown`. You MUST use this tool when a bright outfit is detected.",
+      "perception_tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "notify_if_bright_outfit_shown",
+            "description": "Use this function when a bright outfit is detected in the image with high confidence",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "outfit_color": {
+                  "type": "string",
+                  "description": "Best guess on what color of outfit it is"
+                }
+              },
+              "required": ["outfit_color"]
             }
           }
-        ]
-      },
-      "stt": {
-        "stt_engine": "tavus-advanced",
-        "participant_pause_sensitivity": "high",
-        "participant_interrupt_sensitivity": "high",
-        "smart_turn_detection": true
-      }
+        }
+      ]
     }
-  }'
+  }
+}
 ```
 <Note>
 Please see the [Create a Persona](https://docs.tavus.io/api-reference/personas/create-persona) endpoint for more details.
