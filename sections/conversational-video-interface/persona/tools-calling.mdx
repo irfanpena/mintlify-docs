@@ -162,7 +162,7 @@ This example explains the `get_current_time` function from the [example configur
 </Note>
 1. **Input Detected**  
    The AI receives input in real time. This could be user speech or visual context.
-   <br/>**Example**: The user says, `“What time is it now in the USA?”`
+   <br/>**Example**: The user says, `“What time is it now in New York?”`
 
 2. **Tool Matching**  
    The LLM analyzes the input and identifies that the user's question matches the purpose of the `get_current_time` function, which expects a `location` argument.
@@ -170,7 +170,7 @@ This example explains the `get_current_time` function from the [example configur
 3. **`tool_call` Broadcast**  
    Tavus broadcasts a [tool call](https://docs.tavus.io/sections/event-schemas/conversation-toolcall) event over the active [Daily](https://docs.daily.co) room.
    <br/>Your app can listen for this event, handle the tool call (e.g. by calling an API), and return the result to the AI for use in its response:
-   <br/>`“It’s currently 2:43 PM in New York, USA.”`
+   <br/>`“It’s currently 2:43 PM in New York”`
 
 ## Modify Existing Tools
 You can update tool definitions using the [Update Persona API](https://docs.tavus.io/api-reference/personas/patch-persona).
