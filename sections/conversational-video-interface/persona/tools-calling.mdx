@@ -4,8 +4,7 @@ sidebarTitle: Tool Calling
 description: Learn how to configure the tool calling.
 ---
 
-Tool calling allows AI agents to invoke functions during a conversation—enabling interaction with APIs or services in real-time.
-
+Tool calling allows AI agents run functions during a conversation, enabling real-time interaction with APIs and services.
 Our `tools` capability is compatible with OpenAI's [Function Calling](https://platform.openai.com/docs/guides/function-calling) and is essential for building intelligent conversational agents that can reason, retrieve, and take actions.
 
 ## Defining Tool
@@ -49,6 +48,21 @@ Optional subfields for each parameter:
 | `type` | string | ✅ | Data type (e.g., `string`, `number`, `boolean`). |
 | `description` | string | ❌ | Explains what the parameter represents and how it should be used. |
 | `enum` | array | ❌ | Defines a strict list of allowed values for this parameter. Useful for categorical choices. |
+
+## How Tool Calling Works
+
+Tool calling is triggered during an active conversation when either the LLM or the perception model detects a need to invoke a function. Here’s how it works:
+1. **Input Analysis**  
+   The AI receives user utterances (from conversation) or video frames (from perception).
+
+2. **Tool Matching**  
+   The model evaluates whether a configured function matches the current user intent or visual context.  
+
+3. **Function Invocation**  
+   If matched, it creates a function call with the right name and parameters.
+
+4. **Toolcall Broadcast**  
+   Tavus broadcasts a [tool call](https://docs.tavus.io/sections/event-schemas/conversation-toolcall) event over the active [Daily](https://docs.daily.co) room. Your app can listen for this event, handle the tool call (e.g. by calling an API), and optionally return the result to the AI for use in its response. 
 
 ## Example Configuration
 
