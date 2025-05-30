@@ -62,7 +62,7 @@ Tool calling is triggered during an active conversation when either the LLM or t
    If matched, it creates a function call with the right name and parameters.
 
 4. **Toolcall Broadcast**  
-   Tavus broadcasts a [tool call](https://docs.tavus.io/sections/event-schemas/conversation-toolcall) event over the active [Daily](https://docs.daily.co) room. Your app can listen for this event, handle the tool call (e.g. by calling an API), and optionally return the result to the AI for use in its response. 
+   Tavus broadcasts a [tool call](https://docs.tavus.io/sections/event-schemas/conversation-toolcall) event over the active [Daily](https://docs.daily.co) room. Your app can listen for this event, handle the tool call (e.g. by calling an API), and return the result to the AI for use in its response. 
 
 ## Example Configuration
 
