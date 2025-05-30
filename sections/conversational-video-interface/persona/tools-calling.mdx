@@ -49,21 +49,6 @@ Optional subfields for each parameter:
 | `description` | string | ❌ | Explains what the parameter represents and how it should be used. |
 | `enum` | array | ❌ | Defines a strict list of allowed values for this parameter. Useful for categorical choices. |
 
-## How Tool Calling Works
-
-Tool calling is triggered during an active conversation when either the LLM or the perception model detects a need to invoke a function. Here’s how it works:
-1. **Input Detected**  
-   The AI receives user inputs in real time during the conversation.
-
-2. **Tool Matching**  
-   The model evaluates whether a configured function matches the current user intent or visual context.  
-
-3. **Function Invocation**  
-   If matched, it creates a function call with the right name and parameters.
-
-4. **Toolcall Broadcast**  
-   Tavus broadcasts a [tool call](https://docs.tavus.io/sections/event-schemas/conversation-toolcall) event over the active [Daily](https://docs.daily.co) room. Your app can listen for this event, handle the tool call (e.g. by calling an API), and return the result to the AI for use in its response. 
-
 ## Example Configuration
 
 Here’s an example of tool calling in both the `llm` and `perception` layers:
@@ -169,6 +154,20 @@ Here’s an example of tool calling in both the `llm` and `perception` layers:
 }
 ```
 </CodeGroup>
+## How Tool Calling Works
+
+Tool calling is triggered during an active conversation when either the LLM or the perception model needs to invoke a function. Here’s how the process works:
+1. **Input Detected**  
+   The AI receives input in real time. This could be user speech or visual context.
+   <br/>**Example**: The user says, `“What time is it now in the USA?”`
+
+2. **Tool Matching**  
+   The LLM analyzes the input and identifies that the user's question matches the purpose of the `get_current_time` function. This function is defined in your LLM tool configuration to retrieve the current local time for a given location.
+
+3. **`tool_call` Broadcast**  
+   Tavus broadcasts a [tool call](https://docs.tavus.io/sections/event-schemas/conversation-toolcall) event over the active [Daily](https://docs.daily.co) room.
+   <br/>Your app can listen for this event, handle the tool call (e.g. by calling an API), and return the result to the AI for use in its response:
+   <br/>`“It’s currently 2:43 PM in New York, USA.”`
 
 ## Modify Existing Tools
 You can update tool definitions using the [Update Persona API](https://docs.tavus.io/api-reference/personas/patch-persona).
